@@ -18,8 +18,8 @@ if __name__ == '__main__':
     interest = {'r0': ['i0', 'c0', 'r0', 'r1/0', 10., 100.]}
     pit = {'r0': [['r1/0', ['r1', 'r3'], ['r4', 'r5']], ['r1/1', ['r2', 'r9'], ['r8', 'r7']]]}
     inface = 'r0'
-    Time_out(inface, interest)
+    # Time_out(inface, interest)
     PIT_search_interest(inface, interest)
-    Creat_pit_entry(inface, 'r1/1')
+    # Creat_pit_entry(inface, 'r1/1')
     print_hi('PyCharm')
 

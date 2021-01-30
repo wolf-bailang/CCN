@@ -1,7 +1,11 @@
 from __future__ import print_function
 
 import time
-from Interest import Drop_interest
+
+
+# pit = {'route_ID': [content_name,[inface],[outface]], [content_name,[inface],[outface]]}
+pit = {}
+
 
 def Time_out(inface, interest):
     '''
@@ -15,9 +19,8 @@ def Time_out(inface, interest):
     now_time = time.time()  # s
     print(now_time)
     if now_time - start_time < life_time:
-        Drop_interest(inface, interest)
-    else:
-        PIT_search_interest(inface, interest)
+        return True
+    return False
 
 def Merge_pit_entry(index, inface):
     pit_entry = pit[inface]
@@ -26,6 +29,7 @@ def Merge_pit_entry(index, inface):
     # print(pit_entry)
     # pit[inface] = pit_entry
     # print(pit)
+
 def Creat_pit_entry(inface, content_name):
     pit_entry = pit[inface]
     # print(pit_entry)
@@ -38,18 +42,23 @@ def PIT_search_interest(inface, interest):
         interest = {'route_ID': [interest_ID, consumer_ID, route_ID, content_name, start_time, life_time]}
         pit = {'route_ID': [content_name,[inface],[outface]], [content_name,[inface],[outface]]}
     '''
+    # Check whether the interest packet has timed out
+    if Time_out(inface, interest):
+        return False
+    # Get the PIT record table of this router
     pit_entry = pit[inface]
     # print(pit_entry)
+    # Get the requested content name of the interest packet
     content_name = interest[inface][-3]
+    # Check whether there is a record of an entry with the same name as the interest packet in the PIT
     for i in range(len(pit_entry)):
-        print(pit_entry[i][0])
+        # print(pit_entry[i][0])
         if content_name == pit_entry[i][0]:
             # Merge_pit_entry
-            pit_entry[i][1].append(inface)    # Merge_pit_entry(i, inface)
-            Drop_interest(inface, interest)
+            Merge_pit_entry(i, inface)    # pit_entry[i][1].append(inface)
             return False
     # Creat_pit_entry
-    pit_entry.append([content_name, [inface],[]])   # Creat_pit_entry(inface, content_name)
+    Creat_pit_entry(inface, content_name)   # pit_entry.append([content_name, [inface],[]])
     return True
 
 def PIT_search_data(inface, data):
