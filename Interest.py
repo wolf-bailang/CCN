@@ -13,7 +13,7 @@ interest = {}
 def Drop_interest(inface, interest):
     print('2')
 
-def On_interest(inface, interest):
+def On_interest(inface, route_ID, interest):
     global PS_search_ACK
     PIT_search_ACK = PIT_search_interest(inface, route_ID, interest)
     if PIT_search_ACK == True:

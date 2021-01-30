@@ -20,9 +20,24 @@ def PS_search_interest(inface, interest):
             return True
     return False
 
+def PS_init(route_num, content_num):
+    content_name = []
+    ps = {}
+    for i in range(route_num):
+        for j in range(content_num):
+            route_ID = 'r' + str(i)
+            content_name.append(route_ID + '/' + str(j))
+        ps_entry = dict([[inface, content_name]])
+        ps.update(ps_entry)
+    return  ps
+
+
 if __name__ == '__main__':
-    ps = {'r0': ['r0/0', 'r0/1', 'r1/1'], 'r1': ['r2/0', 'r2/1', 'r2/1']}
+    # ps = {'r0': ['r0/0', 'r0/1', 'r1/1'], 'r1': ['r2/0', 'r2/1', 'r2/1']}
     interest = {'r0': ['i0', 'c0', 'r0', 'r1/1', 10., 100.]}
     inface = 'r0'
-    PS_search_interest(inface, interest)
-    # print('ps')
+    route_num = 12
+    content_num = 100
+    # PS_search_interest(inface, interest)
+    ps = PS_init(route_num, content_num)
+    print(ps)
