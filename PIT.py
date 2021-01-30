@@ -17,7 +17,7 @@ def Time_out(inface, interest):
     life_time = interest[inface][-1]
     # print(life_time)
     now_time = time.time()  # s
-    print(now_time)
+    # print(now_time)
     if now_time - start_time < life_time:
         return True
     return False
@@ -36,7 +36,7 @@ def Creat_pit_entry(inface, content_name):
     pit_entry.append([content_name, [inface],[]])
     # print(pit_entry)
 
-def PIT_search_interest(inface, interest):
+def PIT_search_interest(inface, route_ID, interest):
     '''
         inface = route_ID
         interest = {'route_ID': [interest_ID, consumer_ID, route_ID, content_name, start_time, life_time]}
