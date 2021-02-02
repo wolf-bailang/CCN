@@ -79,16 +79,19 @@ def PIT_search_data(inface, data):
             return True
 
     # Merge_pit_entry
-    fib_entry[i][1].append(inface)  # Merge_pit_entry(i, inface)
+    # fib_entry[i][1].append(inface)  # Merge_pit_entry(i, inface)
     # Drop_data(inface, data)
     return False
 
-def FIB_init(route_num, content_num):
-    content_name = []
-    fib = {}
-    fib_entry = dict([[inface, content_name]])
-    fib.update(fib_entry)
-    return  fib
+def FIB_init(network): #route_num, content_num
+    # network = [['r0', ['r1', 'r2']], ['r1' ,['r0', 'r2']], ['r2' ,['r0', 'r1']]]
+    # fib = {}
+    for i in range(len(network)):
+        route_ID = network[i][0]
+        face = network[i][1]
+        fib_entry = dict([[route_ID, face]])
+        fib.update(fib_entry)
+    # return  fib
 
 if __name__ == '__main__':
     """
@@ -100,4 +103,6 @@ if __name__ == '__main__':
     inface = 'r0'
     # Time_out(inface, interest)
     # PIT_search_interest(inface, interest)
-    Creat_fib_entry(inface, 'r1/1')
+    # Creat_fib_entry(inface, 'r1/1')
+    fib = FIB_init()
+    print(fib)

@@ -6,7 +6,7 @@ import time
 # pit = {'route_ID': [content_name,[inface],[outface]], [content_name,[inface],[outface]]}
 pit = {}
 
-
+# Check whether the interest packet has timed out
 def Time_out(inface, interest):
     '''
         inface = route_ID
