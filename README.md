@@ -1,6 +1,6 @@
 # Content-Centric Networking（CCN）
 
-**Format definition**  
+# Format definition  
 >Route_ID = 'r0' 'r1'...  
 Consumer_ID =  'c0' 'c1'...  
 Interest_ID =  'i0' 'i1'...  
@@ -67,7 +67,7 @@ fib = [[content_name,[inface, ...],[outface, ...]], ...]
 git add PIT.py  
 
 提交版本
-git commit -m "Changed some files" 
+git commit -m "Changed some files"   
 git commit -a -m "Changed some files"  
 
 发布版本  

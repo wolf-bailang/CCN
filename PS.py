@@ -1,43 +1,40 @@
 from __future__ import print_function
 
-''''''
-# ps = {'route_ID': [content_name 0-100]}
-ps = {}
+import Table
 
-def PS_search_interest(inface, interest):
+def PS_search_interest(route_ID, interest):
     '''
-    ps = {'route_ID': [content_name 0-100]}
+    PS = {'route_ID': [content_name,...], ...}
+    interest = [interest_ID, consumer_ID, route_ID, content_name, start_time, life_time]
     '''
     # Get the requested content name of the interest packet
-    content_name = interest[inface][-3]
-    # Get the PIT record table of this router
-    ps_entry = ps[inface]
-    # Check whether there is a record of an entry with the same name as the interest packet in the PIT
-    for i in range(len(ps_entry)):
-        # print(pit_entry[i][0])
-        if content_name == ps_entry[i]:
-            # print(ps_entry[i])
+    content_name = interest[-3]
+    # Get the ps record table of this router
+    ps = Table.PS[route_ID]
+    # Check if there is data matching the content name in ps
+    for i in range(len(ps)):
+        # print(ps[0])
+        if content_name == ps[i]:
+            # print(ps[i])
             return True
+    # No data for content name found in ps
     return False
 
+# Producer generates unique content name
 def PS_init(route_num, content_num):
-    content_name = []
-    ps = {}
+    '''
+    PS = {'route_ID': [content_name,...], ...}
+    '''
     for i in range(route_num):
+        route_ID = 'r' + str(i)
+        content_name = []
         for j in range(content_num):
-            route_ID = 'r' + str(i)
+            # Generate content name
             content_name.append(route_ID + '/' + str(j))
-        ps_entry = dict([[inface, content_name]])
-        ps.update(ps_entry)
-    return  ps
-
+        PS_entry = dict([[route_ID, content_name]])
+        Table.PS.update(PS_entry)
 
 if __name__ == '__main__':
-    # ps = {'r0': ['r0/0', 'r0/1', 'r1/1'], 'r1': ['r2/0', 'r2/1', 'r2/1']}
-    interest = {'r0': ['i0', 'c0', 'r0', 'r1/1', 10., 100.]}
-    inface = 'r0'
-    route_num = 12
-    content_num = 100
-    # PS_search_interest(inface, interest)
-    ps = PS_init(route_num, content_num)
-    print(ps)
+    # PS_search_interest(inface='r0', interest=['i0', 'c0', 'r0', 'r1/1', 10., 100.])
+    PS_init(route_num=12, content_num=100)
+    print(Table.PS)
