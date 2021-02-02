@@ -1,7 +1,7 @@
 from __future__ import print_function
 
 import Table
-from Interest import Send_interest
+# from Interest import Send_interest
 
 def Forward_interest(route_ID, interest):
     '''
@@ -13,8 +13,8 @@ def Forward_interest(route_ID, interest):
     fib = ['route_ID', ...]
 
     # Can be optimized
-    FIB = {'route_ID': [[content_name,[inface, ...],[outface, ...]], ...], ... }
-    fib = [[content_name,[inface, ...],[outface, ...]], ...]
+    FIB = {'route_ID': [[content_name,[[cost, outface], ...]], ...], ... }
+    fib = [[content_name,[[cost, outface], ...]], ...]
     '''
     # Get the requested content name of the interest packet
     # content_name = interest[-3]
@@ -24,7 +24,7 @@ def Forward_interest(route_ID, interest):
     for i in range(len(fib)):
         outface = fib[i]
         # print(outface)
-        Send_interest(outface, route_ID, interest)
+        return outface
 
 if __name__ == '__main__':
     ps = {'r0': ['r0/0', 'r0/1', 'r1/1'], 'r1': ['r2/0', 'r2/1', 'r2/1']}

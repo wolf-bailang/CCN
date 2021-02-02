@@ -49,7 +49,7 @@ Content_name = 'route_ID/0-100'.  example: 'r0/0'
       }
 
 **Information recorded in the router's FIB**
->FIB = {'route_ID': [[content_name,[inface, ...],[outface, ...]], ...],
+>FIB = {'route_ID': [[content_name,[[cost, outface], ...]], ...],
        ...
       }
       
@@ -59,7 +59,7 @@ data = [interest_ID, consumer_ID, route_ID, content_name, hop, start_time, life_
 ps = [content_name, ...]  
 pit = [[content_name,[inface, ...],[outface, ...]], ...]        
 cs = [[content_name, cost, record_time], ...]        
-fib = [[content_name,[inface, ...],[outface, ...]], ...]  
+fib = [[content_name,[[cost, outface], ...]], ...]  
 
 
 # git

@@ -41,13 +41,12 @@ def Creat_pit_entry(inface, route_ID, content_name):
         PIT = {'route_ID': [[content_name, [inface, ...], [outface, ...]], ...], ...}
         pit = [[content_name, [inface, ...], [outface, ...]], ...]
     '''
-    pit_temp = []
+    pit = Table.PIT[route_ID]
     pit_entry = [content_name, [inface],[]]
     # print(pit_entry)
-    pit_temp.append(pit_entry)
+    pit.append(pit_entry)
     # print(pit)
-    PIT_temp = dict([[route_ID, pit_temp]])
-    Table.PIT.update(PIT_temp)
+    Table.PIT[route_ID] = pit
     # print(Table.PIT)
 
 # The outface is updated to pit
@@ -64,7 +63,7 @@ def PIT_update_outface(outface, route_ID, interest):
             pit[i] = pit_entry
             # print(pit_entry)
             Table.PIT[route_ID] = pit
-            print(Table.PIT)
+            # print(Table.PIT)
 
 # Check whether there is an entry matching the content name of the interest packet in the pit
 def PIT_search_interest(inface, route_ID, interest):
@@ -94,6 +93,9 @@ def PIT_search_interest(inface, route_ID, interest):
     # Create a pit entry
     Creat_pit_entry(inface, route_ID, content_name)
     return True
+
+
+
 
 def PIT_search_data(inface, route_ID, data):
     '''
