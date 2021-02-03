@@ -73,7 +73,7 @@ git commit -a -m "Changed some files"
 发布版本  
 git pull origin main  
 git push origin main  
-git push https://github.com/wolf-bailang/CCN_For_RTS_courses.git  
+  
 
 删除  
 git rm file  
