@@ -6,7 +6,6 @@ from PIT import *
 from PS import PS_init
 from Network import Network_init
 
-
 """
 ######  Format definition  ######
 Route_ID = 'r0' 'r1'...
@@ -63,29 +62,18 @@ fib = [[content_name,[[cost, outface], ...]], ...]
 """
 
 def CCN_init(route_num, content_num):
-    #fib =
     Network_init(route_num)
-    # ps = {'route_ID': [content_name 0-100]}
     PS_init(route_num, content_num)
-
-    interest = {'r0': ['i0', 'c0', 'r0', 'r1/0', 10., 100.]}
-    pit = {'r0': []}
-    print(' ')
-    # return fib, ps
+    print('')
 
 if __name__ == '__main__':
     """
         Interest_table = {'route_ID': [[interest_ID, consumer_ID, route_ID, content_name, start_time, life_time], ...], ... }
         interest = [interest_ID, consumer_ID, route_ID, content_name, start_time, life_time]
     """
-    # , ps, pit, interest
-    # interest = {}
-    # pit = {}
     route_num = 12
     content_num = 100
-    # fib, ps =
     CCN_init(route_num, content_num)
-    # print(fib)
     print('main')
     print(Table.PS)
 
