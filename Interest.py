@@ -1,28 +1,34 @@
 from __future__ import print_function
 
+import time
 import Table
 from PIT import PIT_search_interest, PIT_update_outface
 from PS import PS_search_interest
-from Data import Send_data
-from Forward import Forward_interest
+from Data import Send_data, Create_data
+from Forward import Forward_interest, Forward_data
 
-def Send_interest(outface, route_ID, interest):
+def Send_interest(Outface, route_ID, interest):
     '''
         PIT = {'route_ID': [[content_name, [inface, ...], [outface, ...]], ...], ...}
         pit = [[content_name, [inface, ...], [outface, ...]], ...]
         Interest_table = {'route_ID': [[interest_ID, consumer_ID, route_ID, content_name, start_time, life_time], ...], ... }
         interest = [interest_ID, consumer_ID, route_ID = inface, content_name, start_time, life_time]
+        Outface = [outface, ...]
     '''
+    # Send interest
+    Interest = []
     # The router ID of the interest packet is updated to the output interface
     # interest = [interest_ID, consumer_ID, route_ID = outface, content_name, start_time, life_time]
-    interest[2] = outface
-    # Send interest
+    # interest[-2] = time.time()
+    for i in range(len(Outface)):
+        Interest.append([Outface[i], interest])
 
     # Remove the interest packet from the interest packet table of the current router
     Remove_interest_entry(route_ID, interest)
     # The outface is updated to fib
-    PIT_update_outface(outface, route_ID, interest)
+    PIT_update_outface(Outface, route_ID, interest)
     # print(interest)
+    return Interest
 
 # Remove the interest packet from the interest packet table of the current router
 def Remove_interest_entry(route_ID, interest):
@@ -55,15 +61,17 @@ def On_interest(inface, route_ID, interest):
     # Find
     if PS_search_ACK == True:
         # Return data packet
-        Send_data(inface, route_ID, interest)
+        data = Create_data(inface, route_ID, interest)
+        Inface = Forward_data(route_ID, data)
+        Send_data(Inface, route_ID, data)
         return
     # miss
     else:
         # Forward the interest packet to the next router
-        outface = Forward_interest(route_ID, interest)
-        print(outface)
-        Send_interest(outface, route_ID, interest)
-
+        Outface = Forward_interest(route_ID, interest)
+        print(Outface)
+        Interest = Send_interest(Outface, route_ID, interest)
+        print(Interest)
 
 
 
