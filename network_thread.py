@@ -4,9 +4,6 @@ import threading
 import queue
 import socket
 
-# def Network_init(route_num): #route_num, content_num
-    
-
 #平行接收
 class Server_accept(threading.Thread):
   def __init__(self, conn, addr, serverID):
@@ -35,6 +32,7 @@ class TBind(threading.Thread):
     self.address = address
 
   def run(self):
+    #Each port will create a connection until the data passing complete
     self.server.bind((self.socket, self.address))
     self.server.listen(10)
     while True:
@@ -48,6 +46,8 @@ class TServer(threading.Thread):
       self.address= 8000 + serverID
       self.serverID = 'r' + str(serverID)
       self.lock = lock
+      
+      #FIB
       self.network = [['r0', ['r1', 'r3']], ['r1', ['r0', 'r2', 'r3']], ['r2', ['r1', 'r4']], ['r3', ['r0', 'r1', 'r5']],
                       ['r4', ['r2', 'r5', 'r6']], ['r5', ['r3', 'r4', 'r5']], ['r6', ['r4', 'r7']], ['r7', ['r6', 'r8', 'r11']],
                       ['r8', ['r5', 'r7', 'r9']], ['r9', ['r8', 'r10']], ['r10', ['r9', 'r11']], ['r11', ['r7', 'r10']]]
@@ -64,13 +64,13 @@ class TServer(threading.Thread):
       
 
 if __name__ == "__main__":
-  server_num = 3
+  server_num = 3    #node num
   threads = []
   q = queue.Queue()
   lock = threading.Lock()
 
   for i in range(server_num):
-    thread = TServer(i,lock)
+    thread = TServer(i,lock)    #create node with thread
     thread.start()
     threads.append(thread)
   
