@@ -43,7 +43,7 @@ class Server(threading.Thread):
         while self.interest_queue.empty is not True:
             interest = self.interest_queue.get()
             return_interest, flag = On_interest(interest[2], self.id, interest)
-            if flag:
+            if flag==2:
                 for i in range(len(return_interest)):
                     send_interest = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
                     send_interest.connect((self.HOST, return_interest[i][0]))
@@ -55,7 +55,7 @@ class Server(threading.Thread):
         while self.data_queue.empty is not True:
             data = self.data_queue.get()
             return_data, flag = On_data(data[2], self.id, data)
-            if flag:
+            if flag==1:
                 for i in range(len(return_data)):
                     send_interest = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
                     send_interest.connect((self.HOST, return_data[i][0]))

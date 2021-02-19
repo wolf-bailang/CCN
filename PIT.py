@@ -2,6 +2,7 @@ from __future__ import print_function
 
 import time
 import Table
+from Interest import Drop_interest
 
 # Check whether the interest packet has timed out
 def Time_out(interest):
@@ -84,6 +85,8 @@ def PIT_search_interest(inface, route_ID, interest):
     # Check whether the interest packet has timed out
     if Time_out(interest):
         # Ack_interest(interest)
+        Drop_interest(route_ID, interest)
+        # Time_out_count += 1
         return False
     # Get the PIT record table of this router
     pit = Table.PIT[route_ID]
@@ -109,8 +112,8 @@ def PIT_search_data(inface, route_ID, data):
     '''
         PIT = {'route_ID': [[content_name, [inface, ...], [outface, ...]], ...], ...}
         pit = [[content_name, [inface, ...], [outface, ...]], ...]
-        Data_table = {'route_ID': [[interest_ID, consumer_ID, route_ID, content_name, hop, start_time, life_time], ...], ... }
-        data = [interest_ID, consumer_ID, route_ID, content_name, hop, start_time, life_time]
+        Data_table = {'route_ID': [[interest_ID, consumer_ID, route_ID, content_name, start_time, life_time, hop], ...], ... }
+        data = [interest_ID, consumer_ID, route_ID, content_name, start_time, life_time, hop]
     '''
     # Get the PIT record table of this router
     pit = Table.PIT[route_ID]
@@ -130,16 +133,16 @@ if __name__ == '__main__':
         interest = [interest_ID, consumer_ID, route_ID, content_name, start_time, life_time]
         PIT = {'route_ID': [[content_name, [inface, ...], [outface, ...]], ...], ...}
         pit = [[content_name, [inface, ...], [outface, ...]], ...]
-        Data_table = {'route_ID': [[interest_ID, consumer_ID, route_ID, content_name, hop, start_time, life_time], ...], ... }
-        data = [interest_ID, consumer_ID, route_ID, content_name, hop, start_time, life_time]
+        Data_table = {'route_ID': [[interest_ID, consumer_ID, route_ID, content_name, start_time, life_time, hop], ...], ... }
+        data = [interest_ID, consumer_ID, route_ID, content_name, start_time, life_time, hop]
     """
-    Table.Data_table = {'r0': ['i0', 'c0', 'r0', 'r1/0', 1.0, 10., 100.]}
+    Table.Data_table = {'r0': ['i0', 'c0', 'r0', 'r1/0', 10., 100., 1.0]}
     Table.PIT = {'r0': [['r1/0', ['r1', 'r3'], ['r4', 'r5']], ['r1/1', ['r2', 'r9'], ['r8', 'r7']]]}
     # Time_out(inface, interest)
     # Merge_pit_entry(1, inface='r1', route_ID='r0')
     # Creat_pit_entry(inface='r11', route_ID='r11', content_name='r6/100')
     # PIT_search_interest(inface= 'r11', route_ID= 'r0', interest= ['i0', 'c0', 'r0', 'r1/0', 10., 100.])
-    # PIT_search_data(inface= 'r11', route_ID= 'r0', data= ['i0', 'c0', 'r0', 'r1/0', 1.0, 10., 100.])
+    # PIT_search_data(inface= 'r11', route_ID= 'r0', data= ['i0', 'c0', 'r0', 'r1/0', 10., 100., 1.0])
     # PIT_update_outface(Outface= ['r11', 'r12'], route_ID= 'r0', interest= ['i0', 'c0', 'r0', 'r1/0', 1.0, 10., 100.])
 
 

@@ -1,7 +1,7 @@
 from __future__ import print_function
 
 import time
-
+import Table
 
 # pit = {'route_ID': [content_name,[inface],[outface]], [content_name,[inface],[outface]]}
 fib = {}
@@ -64,7 +64,7 @@ def PIT_search_interest(inface, route_ID, interest):
 def PIT_search_data(inface, data):
     '''
         inface = route_ID
-        data = {'route_ID': [interest_ID, consumer_ID, route_ID, content_name, hop, start_time, life_time]}
+        data = {'route_ID': [interest_ID, consumer_ID, route_ID, content_name, start_time, life_time, hop]}
         pit = {'route_ID': [content_name,[inface],[outface]], [content_name,[inface],[outface]]}
     '''
     pit_entry = pit[inface]
@@ -84,11 +84,11 @@ def PIT_search_data(inface, data):
     return False
 
 def FIB_init(network): #route_num, content_num
-    # network = [['r0', ['r1', 'r2']], ['r1' ,['r0', 'r2']], ['r2' ,['r0', 'r1']]]
+    # Network = [['r0', ['r1', 'r2']], ['r1' ,['r0', 'r2']], ['r2' ,['r0', 'r1']]]
     # fib = {}
-    for i in range(len(network)):
-        route_ID = network[i][0]
-        face = network[i][1]
+    for i in range(len(Table.Network)):
+        route_ID = Table.Network[i][0]
+        face = Table.Network[i][1]
         fib_entry = dict([[route_ID, face]])
         fib.update(fib_entry)
     # return  fib
@@ -104,5 +104,5 @@ if __name__ == '__main__':
     # Time_out(inface, interest)
     # PIT_search_interest(inface, interest)
     # Creat_fib_entry(inface, 'r1/1')
-    fib = FIB_init()
+    fib = FIB_init(Table.network)
     print(fib)

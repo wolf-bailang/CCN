@@ -39,7 +39,7 @@ def Forward_interest(route_ID, interest):
 def Forward_data(route_ID, data):
     '''
         Data_table = {'route_ID': [[interest_ID, consumer_ID, route_ID, content_name, hop, start_time, life_time], ...],...}
-        data = [interest_ID, consumer_ID, route_ID, content_name, hop, start_time, life_time]
+        data = [interest_ID, consumer_ID, route_ID, content_name, start_time, life_time, hop]
         PIT = {'route_ID': [[content_name, [inface, ...], [outface, ...]], ...], ...}
         pit = [[content_name, [inface, ...], [outface, ...]], ...]
     '''
@@ -66,5 +66,5 @@ if __name__ == '__main__':
                 'r1': ['r1/1', 'r2/1', 'r9/1', 'r8/1', 'r7/1']}
     Table.FIB = {'r0': ['r5'],
                  'r1': ['r2', 'r9', 'r8', 'r7']}
-    # Forward_data(route_ID = 'r0', data = ['i0', 'c0', 'r0', 'r1/0', 2, 10., 100.])
+    # Forward_data(route_ID = 'r0', data = ['i0', 'c0', 'r0', 'r1/0', 10., 100., 2])
     # Forward_interest(route_ID = 'r1', interest = ['i0', 'c0', 'r0', 'r1/0', 10., 100.])

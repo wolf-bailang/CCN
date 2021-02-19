@@ -23,7 +23,7 @@ Interest_table = {'route_ID': [[interest_ID, consumer_ID, route_ID, content_name
                   ...
                  }
 # Data packets received by router
-Data_table = {'route_ID': [[interest_ID, consumer_ID, route_ID, content_name, hop, start_time, life_time], ...],
+Data_table = {'route_ID': [[interest_ID, consumer_ID, route_ID, content_name, start_time, life_time, hop], ...],
               ...
              }
 # Quene_interest = {'route_ID':[]}
@@ -47,7 +47,7 @@ FIB = {'route_ID': [[content_name,[inface, ...],[outface, ...]], ...],
 
 ######  Table for each router  ######
 interest = [interest_ID, consumer_ID, route_ID, content_name, start_time, life_time]
-data = [interest_ID, consumer_ID, route_ID, content_name, hop, start_time, life_time]
+data = [interest_ID, consumer_ID, route_ID, content_name, start_time, life_time, hop]
 ps = [content_name, ...]
 pit = [[content_name,[inface, ...],[outface, ...]], ...]      
 cs = [[content_name, cost, record_time], ...]      

@@ -57,26 +57,34 @@ def On_interest(inface, route_ID, interest):
     # miss
     else:
         # Drop_interest(route_ID, interest)
-        return
-    # Find
+        flag = 0    # Drop interest
+        packet = []
+        return packet, flag
+    # hit
     if PS_search_ACK == True:
         # Return data packet
         data = Create_data(inface, route_ID, interest)
         Inface = Forward_data(route_ID, data)
         Send_data(Inface, route_ID, data)
-        return
+        flag = 1    # Data packet
+        return Data, flag
     # miss
     else:
         # Forward the interest packet to the next router
         Outface = Forward_interest(route_ID, interest)
-        print(Outface)
+        # print(Outface)
         Interest = Send_interest(Outface, route_ID, interest)
-        print(Interest)
+        flag = 2    # Interest packet
+        # print(Interest)
+        return Interest, flag
 
 
 
-def Drop_interest(inface, interest):
+
+def Drop_interest(inface, route_ID, interest):
+
     print('Drop_interest')
+
 
 if __name__ == '__main__':
     '''
