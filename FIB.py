@@ -3,63 +3,88 @@ from __future__ import print_function
 import time
 import Table
 
-# pit = {'route_ID': [content_name,[inface],[outface]], [content_name,[inface],[outface]]}
-fib = {}
-
-
-def Time_out(inface, interest):
+def FIB_init():
     '''
-        inface = route_ID
-        interest = {'route_ID': [interest_ID, consumer_ID, route_ID, content_name, start_time, life_time]}
+        Network = [['r0', ['r1', 'r2']], ['r1' ,['r0', 'r2']], ['r2' ,['r0', 'r1']]]
+        FIB = {'route_ID': [[content_name,[[cost, outface], ...]], ...], ... }
+        fib = [[content_name, [[cost, outface], ...]], ...]
     '''
-    start_time = interest[inface][-2]
-    # print(start_time)
-    life_time = interest[inface][-1]
-    # print(life_time)
+    for i in range(len(Table.Network)):
+        route_ID = Table.Network[i][0]
+        face = Table.Network[i][1]
+        # fib_entry = [content_name, [[cost, outface], ...]
+        fib_entry = dict([[route_ID, face]])
+        Table.FIB.update(fib_entry)
+    # print(Table.FIB)
+
+def Creat_fib_entry(inface, content_name):
+    fib_entry = fib[inface]
+    # print(fib_entry)
+    fib_entry.append([content_name, [[cost, inface]]])
+    # print(fib_entry)
+    return fib_entry
+
+# 获取列表的第一个元素
+def takeSecond(elem):
+    return elem[0]
+
+# The outface is updated to fib
+def FIB_update_outface(inface, route_ID, data):
+    '''
+        Data_table = {'route_ID': [[interest_ID, consumer_ID, route_ID, content_name, start_time, life_time, hop], ...],...}
+        data = [interest_ID, consumer_ID, route_ID, content_name, start_time, life_time, hop]
+        FIB = {'route_ID': [[content_name,[[cost, outface], ...]], ...], ... }
+        fib = [[content_name, [[cost, outface], ...]], ...]
+    '''
+    fib = Table.FIB[route_ID]
+    content_name = data[3]
     now_time = time.time()  # s
-    # print(now_time)
-    if now_time - start_time < life_time:
-        return True
-    return False
+    cost = now_time - life_time
+    # Check whether there is a record of an entry with the same name as the data packet in the FIB
+    for i in range(len(fib)):
+        # print(fib[i])
+        fib_entry = fib[i]
+        # print(fib_entry)
+        if content_name == fib_entry[0]:
+            fib_entry[2].append([cost, inface])
+            # sort
+            fib_entry.sort(key=takeSecond)
+            fib[i] = fib_entry
+            # print(fib_entry)
+            Table.FIB[route_ID] = fib
+            # print(Table.FIB)
+        else:
+            fib_entry = Creat_fib_entry(inface, content_name)
+            fib[i] = fib_entry
+            # print(fib_entry)
+            Table.FIB[route_ID] = fib
+            # print(Table.FIB)
 
-def Merge_pit_entry(index, inface):
-    pit_entry = pit[inface]
-    # print(pit_entry)
-    pit_entry[index][1].append(inface)
-    # print(pit_entry)
-    # pit[inface] = pit_entry
-    # print(pit)
-
-def Creat_pit_entry(inface, content_name):
-    pit_entry = pit[inface]
-    # print(pit_entry)
-    pit_entry.append([content_name, [inface],[]])
-    # print(pit_entry)
-
-def PIT_search_interest(inface, route_ID, interest):
+def FIB_search_interest(inface, route_ID, interest):
     '''
         inface = route_ID
-        interest = {'route_ID': [interest_ID, consumer_ID, route_ID, content_name, start_time, life_time]}
-        pit = {'route_ID': [content_name,[inface],[outface]], [content_name,[inface],[outface]]}
+        Interest_table = {'route_ID': [[interest_ID, consumer_ID, route_ID, content_name, start_time, life_time], ...], ... }
+        interest = [interest_ID, consumer_ID, route_ID, content_name, start_time, life_time]
+        FIB = {'route_ID': [[content_name,[[cost, outface], ...]], ...], ... }
+        fib = [[content_name, [[cost, outface], ...]], ...]
     '''
-    # Check whether the interest packet has timed out
-    if Time_out(inface, interest):
-        return False
-    # Get the PIT record table of this router
-    pit_entry = pit[inface]
-    # print(pit_entry)
+    # Get the FIB record table of this router
+    fib = Table.FIB[route_ID]
+    # print(fib_entry)
     # Get the requested content name of the interest packet
-    content_name = interest[inface][-3]
-    # Check whether there is a record of an entry with the same name as the interest packet in the PIT
-    for i in range(len(pit_entry)):
-        # print(pit_entry[i][0])
-        if content_name == pit_entry[i][0]:
-            # Merge_pit_entry
-            Merge_pit_entry(i, inface)    # pit_entry[i][1].append(inface)
-            return False
-    # Creat_pit_entry
-    Creat_pit_entry(inface, content_name)   # pit_entry.append([content_name, [inface],[]])
-    return True
+    content_name = interest[3]
+    # Check whether there is a record of an entry with the same name as the interest packet in the FIB
+    for i in range(len(fib)):
+        fib_entry = fib[i]
+        # print(fib_entry)
+        if content_name == fib_entry[0]:
+            outface = best_route(fib_entry[1])
+            return outface
+    outface = brocast(fib)
+    return outface
+
+
+
 
 def PIT_search_data(inface, data):
     '''
@@ -83,26 +108,23 @@ def PIT_search_data(inface, data):
     # Drop_data(inface, data)
     return False
 
-def FIB_init(network): #route_num, content_num
-    # Network = [['r0', ['r1', 'r2']], ['r1' ,['r0', 'r2']], ['r2' ,['r0', 'r1']]]
-    # fib = {}
-    for i in range(len(Table.Network)):
-        route_ID = Table.Network[i][0]
-        face = Table.Network[i][1]
-        fib_entry = dict([[route_ID, face]])
-        fib.update(fib_entry)
-    # return  fib
-
 if __name__ == '__main__':
     """
         incomingface = route_ID
         interest = {'route_ID': [interest_ID, consumer_ID, route_ID, content_name, start_time, life_time]}
     """
+    # pit = {'route_ID': [content_name,[inface],[outface]], [content_name,[inface],[outface]]}
+    Table.Network = [['r0', ['r1', 'r3']], ['r1', ['r0', 'r2', 'r3']], ['r2', ['r1', 'r4']], ['r3', ['r0', 'r1', 'r5']],
+                     ['r4', ['r2', 'r5', 'r6']], ['r5', ['r3', 'r4', 'r5']], ['r6', ['r4', 'r7']],
+                     ['r7', ['r6', 'r8', 'r11']],
+                     ['r8', ['r5', 'r7', 'r9']], ['r9', ['r8', 'r10']], ['r10', ['r9', 'r11']], ['r11', ['r7', 'r10']]]
+    Table.FIB = {}
     interest = {'r0': ['i0', 'c0', 'r0', 'r1/0', 10., 100.]}
     pit = {'r0': [['r1/0', ['r1', 'r3'], ['r4', 'r5']], ['r1/1', ['r2', 'r9'], ['r8', 'r7']]]}
     inface = 'r0'
+
     # Time_out(inface, interest)
     # PIT_search_interest(inface, interest)
     # Creat_fib_entry(inface, 'r1/1')
-    fib = FIB_init(Table.network)
-    print(fib)
+    FIB_init()
+    # print(fib)

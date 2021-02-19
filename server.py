@@ -34,31 +34,48 @@ class Server(threading.Thread):
             conn, addr = server.accept()
             packet = conn.recv(1024)
             packet = json.loads(packet)
-            if packet[0] == "I":
-                self.interest_queue.put(packet)
-            else:
-                self.data_queue.put(packet)
+            # packet = ["interest", interest] or ["data", data]
+            if packet[0] == "interest":         # Interest packet received
+                self.interest_queue.put(packet[1])
+            else:                               # Data packet received
+                self.data_queue.put(packet[1])
 
     def interest_process(self):
         while self.interest_queue.empty is not True:
             interest = self.interest_queue.get()
-            return_interest, flag = On_interest(interest[2], self.id, interest)
-            if flag==2:
-                for i in range(len(return_interest)):
+            # interest[2] = inface, self.id = route_ID
+            packet, flag = On_interest(interest[2], self.id, interest)
+            if flag==1:     # send Datas packet
+                data_packet = packet
+                for i in range(len(data_packet)):
+                    send_data = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+                    # data_packet[i][0] = outface
+                    send_data.connect((self.HOST, data_packet[i][0]))
+                    # data_packet[i][1] = data
+                    send_data.sendall(bytes(json.dumps(data_packet[i][1]), encoding='utf-8'))
+            elif flag==2:     # send Interests packet
+                interest_packet = packet
+                for i in range(len(interest_packet)):
                     send_interest = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-                    send_interest.connect((self.HOST, return_interest[i][0]))
-                    send_interest.sendall(bytes(json.dumps(return_interest[i][1]), encoding='utf-8'))
-            else:
+                    # interest_packet[i][0] = outface
+                    send_interest.connect((self.HOST, interest_packet[i][0]))
+                    # interest_packet[i][1] = interest
+                    send_interest.sendall(bytes(json.dumps(interest_packet[i][1]), encoding='utf-8'))
+            else:       # Drop interest
                 pass
 
     def data_process(self):
         while self.data_queue.empty is not True:
             data = self.data_queue.get()
-            return_data, flag = On_data(data[2], self.id, data)
-            if flag==1:
-                for i in range(len(return_data)):
-                    send_interest = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-                    send_interest.connect((self.HOST, return_data[i][0]))
-                    send_interest.sendall(bytes(json.dumps(return_data[i][1]), encoding='utf-8'))
-            else:
+            # data[2] = inface, self.id = route_ID
+            packet, flag = On_data(data[2], self.id, data)
+            if flag==1:     # send Datas packet
+                data_packet = packet
+                for i in range(len(data_packet)):
+                    send_data = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+                    # data_packet[i][0] = outface
+                    send_data.connect((self.HOST, data_packet[i][0]))
+                    # data_packet[i][1] = data
+                    send_data.sendall(bytes(json.dumps(data_packet[i][1]), encoding='utf-8'))
+            else:       # Drop data
                 pass

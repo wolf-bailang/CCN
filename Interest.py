@@ -7,28 +7,26 @@ from PS import PS_search_interest
 from Data import Send_data, Create_data
 from Forward import Forward_interest, Forward_data
 
-def Send_interest(Outface, route_ID, interest):
+def Send_interest(Outfaces, route_ID, interest):
     '''
         PIT = {'route_ID': [[content_name, [inface, ...], [outface, ...]], ...], ...}
         pit = [[content_name, [inface, ...], [outface, ...]], ...]
         Interest_table = {'route_ID': [[interest_ID, consumer_ID, route_ID, content_name, start_time, life_time], ...], ... }
         interest = [interest_ID, consumer_ID, route_ID = inface, content_name, start_time, life_time]
-        Outface = [outface, ...]
+        Outfaces = [outface, ...]
     '''
     # Send interest
-    Interest = []
+    Interests = []
     # The router ID of the interest packet is updated to the output interface
     # interest = [interest_ID, consumer_ID, route_ID = outface, content_name, start_time, life_time]
     # interest[-2] = time.time()
-    for i in range(len(Outface)):
-        Interest.append([Outface[i], interest])
-
+    for i in range(len(Outfaces)):
+        Interests.append([Outfaces[i], interest])
     # Remove the interest packet from the interest packet table of the current router
     Remove_interest_entry(route_ID, interest)
     # The outface is updated to fib
-    PIT_update_outface(Outface, route_ID, interest)
-    # print(interest)
-    return Interest
+    PIT_update_outface(Outfaces, route_ID, interest)
+    return Interests
 
 # Remove the interest packet from the interest packet table of the current router
 def Remove_interest_entry(route_ID, interest):
@@ -49,37 +47,34 @@ def On_interest(inface, route_ID, interest):
     '''
     # Check whether there is an entry matching the content name of the interest packet in the pit
     PIT_search_ACK = PIT_search_interest(inface, route_ID, interest)
-    # match
+    # interest match in PIT
     if PIT_search_ACK == True:
         # CS_search_ACK = CS_search_interest(inface, interest)
         # Find the data of the content name in ps
         PS_search_ACK = PS_search_interest(route_ID, interest)
-    # miss
+    # interest miss in PIT
     else:
-        # Drop_interest(route_ID, interest)
+        # Drop_interest(in PSroute_ID, interest)
         flag = 0    # Drop interest
         packet = []
         return packet, flag
-    # hit
+    # interest hit in PS
     if PS_search_ACK == True:
         # Return data packet
         data = Create_data(inface, route_ID, interest)
         Inface = Forward_data(route_ID, data)
         Send_data(Inface, route_ID, data)
-        flag = 1    # Data packet
+        flag = 1    # send Data packet
         return Data, flag
-    # miss
+    # interest miss in PS
     else:
         # Forward the interest packet to the next router
-        Outface = Forward_interest(route_ID, interest)
-        # print(Outface)
-        Interest = Send_interest(Outface, route_ID, interest)
-        flag = 2    # Interest packet
-        # print(Interest)
-        return Interest, flag
-
-
-
+        Outfaces = Forward_interest(route_ID, interest)
+        # print(Outfaces)
+        Interests = Send_interest(Outfaces, route_ID, interest)
+        flag = 2    # send Interests packet
+        # print(Interests)
+        return Interests, flag
 
 def Drop_interest(inface, route_ID, interest):
 

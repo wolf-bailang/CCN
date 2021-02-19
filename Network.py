@@ -5,14 +5,11 @@ from PIT import *
 from PS import PS_init
 from FIB import FIB_init
 
-def Network_init(route_num): #route_num, content_num
+def Network_init():
     Table.Network = [['r0', ['r1', 'r3']], ['r1', ['r0', 'r2', 'r3']], ['r2', ['r1', 'r4']], ['r3', ['r0', 'r1', 'r5']],
                ['r4', ['r2', 'r5', 'r6']], ['r5', ['r3', 'r4', 'r5']], ['r6', ['r4', 'r7']], ['r7', ['r6', 'r8', 'r11']],
                ['r8', ['r5', 'r7', 'r9']], ['r9', ['r8', 'r10']], ['r10', ['r9', 'r11']], ['r11', ['r7', 'r10']]]
-    # fib = \
     FIB_init()
-
-    # return  fib
 
 if __name__ == '__main__':
     """

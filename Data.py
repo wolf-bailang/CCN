@@ -9,7 +9,7 @@ def Create_data(inface, route_ID, interest):
     '''
         Interest_table = {'route_ID': [[interest_ID, consumer_ID, route_ID, content_name, start_time, life_time], ...], ... }
         interest = [interest_ID, consumer_ID, route_ID, content_name, start_time, life_time]
-        Data_table = {'route_ID': [[interest_ID, consumer_ID, route_ID, content_name, hop, start_time, life_time], ...], ... }
+        Data_table = {'route_ID': [[interest_ID, consumer_ID, route_ID, content_name, start_time, life_time, hop], ...], ... }
         data = [interest_ID, consumer_ID, route_ID, content_name, start_time, life_time, hop]
     '''
     interest_ID = interest[route_ID][0]
@@ -18,38 +18,42 @@ def Create_data(inface, route_ID, interest):
     hop = 0
     start_time = interest[route_ID][-2]
     cost_time = time.time()  # s
-    data = [route_ID, [interest_ID, consumer_ID, route_ID, content_name, hop, start_time, cost_time]]
+    data = [route_ID, [interest_ID, consumer_ID, route_ID, content_name, start_time, cost_time, hop]]
     # print(data_temp)
     return data
 
-def Send_data(Inface, route_ID, data):
+def Send_data(Infaces, route_ID, data):
     '''
-        Data_table = {'route_ID': [[interest_ID, consumer_ID, route_ID, content_name, hop, start_time, life_time], ...], ... }
-        data = [interest_ID, consumer_ID, route_ID, content_name, hop, start_time, life_time]
+        Data_table = {'route_ID': [[interest_ID, consumer_ID, route_ID, content_name, start_time, life_time, hop], ...], ... }
+        data = [interest_ID, consumer_ID, route_ID, content_name, start_time, life_time, hop]
     '''
-    Data = []
+    Datas = []
     # The router ID of the data packet is updated to the output interface
     # data = [interest_ID, consumer_ID, route_ID, content_name, start_time, life_time, hop]
     data[4] = data[4] + 1   # hop + 1
-    for i in range(len(Inface)):
-        Data.append([Inface[i], data])
-    return Data
+    for i in range(len(Infaces)):
+        Datas.append([Infaces[i], data])
+    return Datas
 
 # Interest packet processing
 def On_data(inface, route_ID, data):
     '''
-        Data_table = {'route_ID': [[interest_ID, consumer_ID, route_ID, content_name, hop, start_time, life_time], ...],...}
-        data = [interest_ID, consumer_ID, route_ID, content_name, hop, start_time, life_time]
+        Data_table = {'route_ID': [[interest_ID, consumer_ID, route_ID, content_name, start_time, life_time, hop], ...],...}
+        data = [interest_ID, consumer_ID, route_ID, content_name, start_time, life_time, hop]
     '''
     # Check whether there is an entry matching the content name of the data packet in the pit
     PIT_search_ACK = PIT_search_data(inface, route_ID, data)
+    # data match in PIT
     if PIT_search_ACK:
         # CS_cache_data(inface, data)
-        Inface = Forward_data(route_ID, data)
-        Data = Send_data(Inface, route_ID, data)
-        # print(Data)
+        # FIB_update_outface(inface, route_ID, data)
+        Infaces = Forward_data(route_ID, data)
+        Datas = Send_data(Infaces, route_ID, data)
+        # print(Datas)
         flag = 1
-        return Data, flag
+        PIT_entry_Remove(route_ID, data)
+        return Datas, flag
+    # data miss in PIT
     else:
         # fib_data(inface, data)
         Drop_data(inface, data)
