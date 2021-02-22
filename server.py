@@ -27,8 +27,9 @@ class Server(threading.Thread):
         
     def start_network(self, stime):
         while time.time() - stime == 1:
-            # func(self.id)
-            pass
+            # start_packet = func(self.id)
+            for i in start_packet:
+                self.interest_queue.put(i)
 
     def accept(self):
         server = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
