@@ -24,6 +24,11 @@ class Server(threading.Thread):
         threading.Thread(target = self.accept, daemon=True).start()
         threading.Thread(target = self.interest_process, daemon=True).start()
         threading.Thread(target = self.data_process, daemon=True).start()
+        
+    def start_network(self, stime):
+        while time.time() - stime == 1:
+            # func(self.id)
+            pass
 
     def accept(self):
         server = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
