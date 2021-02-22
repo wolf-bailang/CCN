@@ -14,18 +14,24 @@ def main():
 
     for i in range(server_num):
         # interest_data = {"data": data[2][2], "id": 8000 + i, "time": time.time()}
-        server = Server(i, data[i])
+        server = Server(i)
         server.start()
         server_list.append(server)
 
     for id , i in enumerate(server_list):
-        interest_data = {"data": data[2][2], "id": 8000 + id, "time": time.time()}
-        i.send_interest(interest_data)
-        interest_data = {"data": data[1][1], "id": 8000 + id, "time": time.time()}
-        i.send_interest(interest_data)
-        interest_data = {"data": data[3][0], "id": 8000 + id, "time": time.time()}
-        i.send_interest(interest_data)
-
+        i.start_network()
+#         interest_data = {"data": data[2][2], "id": 8000 + id, "time": time.time()}
+#         i.send_interest(interest_data)
+#         interest_data = {"data": data[1][1], "id": 8000 + id, "time": time.time()}
+#         i.send_interest(interest_data)
+#         interest_data = {"data": data[3][0], "id": 8000 + id, "time": time.time()}
+#         i.send_interest(interest_data)
+        
+    while True:
+        if time.time() - start_time > 10:
+            for i in server_list:
+                i.join()
+            break
 
 if __name__ == '__main__':
     main()
