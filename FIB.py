@@ -47,7 +47,7 @@ def FIB_update_outface(inface, route_ID, data):
         # print(fib_entry)
         if content_name == fib_entry[0]:
             fib_entry[2].append([cost, inface])
-            # sort
+            # sort fib_entry based on cost
             fib_entry.sort(key=takeSecond)
             fib[i] = fib_entry
             # print(fib_entry)

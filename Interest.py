@@ -1,10 +1,14 @@
 from __future__ import print_function
 
 import time
+# from numpy import *
+import numpy as np
+
 import Table
-from PIT import PIT_search_interest, PIT_update_outface
-from PS import PS_search_interest
-from Data import Send_data, Create_data
+#  from PIT import PIT_search_interest, PIT_update_outface
+from PIT import *
+from ps import PS_search_interest
+from data import Send_data, Create_data
 from Forward import Forward_interest, Forward_data
 
 def Send_interest(Outfaces, route_ID, interest):
@@ -55,31 +59,41 @@ def On_interest(inface, route_ID, interest):
     # interest miss in PIT
     else:
         # Drop_interest(in PSroute_ID, interest)
-        flag = 0    # Drop interest
         packet = []
-        return packet, flag
+        return packet
     # interest hit in PS
     if PS_search_ACK == True:
         # Return data packet
         data = Create_data(inface, route_ID, interest)
         Inface = Forward_data(route_ID, data)
-        Send_data(Inface, route_ID, data)
-        flag = 1    # send Data packet
-        return Data, flag
+        Datas = Send_data(Inface, route_ID, data)
+        return Datas
     # interest miss in PS
     else:
         # Forward the interest packet to the next router
         Outfaces = Forward_interest(route_ID, interest)
         # print(Outfaces)
         Interests = Send_interest(Outfaces, route_ID, interest)
-        flag = 2    # send Interests packet
         # print(Interests)
-        return Interests, flag
+        return Interests
 
 def Drop_interest(inface, route_ID, interest):
 
     print('Drop_interest')
 
+# Consumer generated interest packet
+def Generate_interest(route_ID, frequency):
+    interests = []
+    consumer_ID = 'c'+str(Table.Route_ID.index(route_ID))
+    life_time = 1.  # 1s
+    for i in frequency:
+        interest_ID = 'i'+str(len(Table.Interest_ID) + 1)
+        Table.Interest_ID.append(interest_ID)
+        index = np.random.randint(0, 1200)
+        content_name = Table.Content_table[index]
+        start_time = time.time()
+        interests.append([interest_ID, consumer_ID, route_ID, content_name, start_time, life_time])
+    return interests
 
 if __name__ == '__main__':
     '''
@@ -99,7 +113,14 @@ if __name__ == '__main__':
                  'r1': ['r2', 'r9', 'r8', 'r7']}
     # Send_interest(outface= 'r120', route_ID= 'r0', interest= ['i0', 'c0', 'r1', 'r2/1', 10., 100.])
     On_interest(inface= 'r2', route_ID= 'r0', interest= ['i0', 'c0', 'r2', 'r1/7', 10., 100.])
-    print(Table.Interest_table)
-    print(Table.PIT)
-    print('interest')
+    #print(Table.Interest_table)
+    #print(Table.PIT)
+    #print('interest')
+
+    #Table.Route_ID = ['r0', 'r1', 'r2']
+    #index = Table.Route_ID.index('r2')
+    #print(index)
+    index = []
+    interest_ID = index[0][1][0]
+    print(interest_ID[0])
 

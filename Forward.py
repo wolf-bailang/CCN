@@ -30,11 +30,11 @@ def Forward_interest(route_ID, interest):
             return Outface
     '''
     # Not optimized
-    # Get the fib record table of this router
-    fib = Table.FIB[route_ID]
-    Outface = fib
+    # Get the fibs record table of this router
+    fibs = Table.FIB[route_ID]
+    Outfaces = fibs
     # print(Outface)
-    return Outface
+    return Outfaces
 
 def Forward_data(route_ID, data):
     '''
@@ -53,9 +53,9 @@ def Forward_data(route_ID, data):
         pit_entry = pit[i]
         # print(pit_entry[0])
         if content_name == pit_entry[0]:
-            Inface = pit_entry[1]
-            # print(Inface)
-            return Inface
+            Infaces = pit_entry[1]
+            # print(Infaces)
+            return Infaces
 
 if __name__ == '__main__':
     Table.PIT = {'r0': [['r1/0', ['r1', 'r3'], ['r4', 'r5']], ['r2/1', ['r2', 'r9'], ['r8', 'r7']]],

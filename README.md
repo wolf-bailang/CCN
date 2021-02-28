@@ -21,12 +21,12 @@ Content_name = 'route_ID/0-100'.  example: 'r0/0'
                  }
 
 **Interest packets received by router**  
->Interest_table = {'route_ID': [[interest_ID, consumer_ID, route_ID, content_name, start_time, life_time], ...],
+>Interest_table = {'route_ID': [[type, interest_ID, consumer_ID, route_ID, content_name, start_time, life_time], ...],
                   ...
                  }
 
 **Data packets received by router**  
->Data_table = {'route_ID': [[interest_ID, consumer_ID, route_ID, content_name, start_time, life_time, hop], ...],
+>Data_table = {'route_ID': [[type, interest_ID, consumer_ID, route_ID, content_name, start_time, life_time, hop], ...],
               ...
              }
 
@@ -54,8 +54,8 @@ Content_name = 'route_ID/0-100'.  example: 'r0/0'
       }
       
 **Table for each router**  
->interest = [interest_ID, consumer_ID, route_ID, content_name, start_time, life_time]  
-data = [interest_ID, consumer_ID, route_ID, content_name, start_time, life_time, hop]  
+>interest = [type, interest_ID, consumer_ID, route_ID, content_name, start_time, life_time]  
+data = [type, interest_ID, consumer_ID, route_ID, content_name, start_time, life_time, hop]  
 ps = [content_name, ...]  
 pit = [[content_name,[inface, ...],[outface, ...]], ...]        
 cs = [[content_name, cost, record_time], ...]        

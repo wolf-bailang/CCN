@@ -57,6 +57,10 @@ fib = [[content_name,[inface, ...],[outface, ...]], ...]
 ######  Global table  ######
 # Network router link
 Network = []
+
+Route_ID = ['r0', 'r1', 'r2', 'r3', 'r4', 'r5', 'r6', 'r7', 'r8', 'r9', 'r10', 'r11']
+Interest_ID = ['i0', 'i1', 'i2', 'i3', 'i4', 'i5', 'i6', 'i7', 'i8', 'i9', 'i10', 'i11']
+
 # 1200 content names
 Content_table = []
 # Interest packets sent by consumer
