@@ -13,11 +13,8 @@ def main():
     route_num = 4
     content_num = 1200
     start_time = time.time()
-
-    network = Network(server_num)
-    networks = network.Network_init()
-    ps = PS(route_num, content_num)
-    ps.PS_init()
+    # network = Network(server_num)
+    # networks = network.Network_init()
 
     # data = unique_strings(k=4, ntokens=400)
     # data = list(data)
@@ -30,12 +27,15 @@ def main():
         server = Server(i)
         server.start()
         server_list.append(server)
+
+        # ps = PS()
+        # ps.PS_init(i, route_num, content_num)
         
     for i in server_list:
-        i.start_network(start_time, frequency)
+        i.start_network(start_time, frequency, content_num)
         
     while True:
-        if time.time() - start_time > 10:
+        if time.time() - start_time > 5:
             for i in server_list:
                 i.join()
             break

@@ -1,80 +1,98 @@
+# -*- coding: UTF-8 -*-
+# Author: Junbin Zhang
+# E-mail: p78083025@ncku.edu.tw
+# Update time: 2021.03.05
+
 from __future__ import print_function
 
 import time
 import matplotlib.pyplot as plt
 
 import Table
-from PIT import *
-# from PIT import PIT_search_data
-from Forward import Forward_data
+from pit import PIT
+from forward import FORWARD
 
-def Create_data(inface, route_ID, interest):
-    '''
-        Interest_table = {'route_ID': [[interest_ID, consumer_ID, route_ID, content_name, start_time, life_time], ...], ... }
-        interest = [interest_ID, consumer_ID, route_ID, content_name, start_time, life_time]
-        Data_table = {'route_ID': [[data_ID, interest_ID, consumer_ID, route_ID, content_name, start_time, life_time, hop], ...], ... }
-        data = [data_ID, interest_ID, consumer_ID, route_ID, content_name, start_time, life_time, hop]
-    '''
-    data_ID = 'd'
-    interest_ID = interest[route_ID][0]
-    consumer_ID = interest[route_ID][1]
-    content_name = interest[route_ID][-3]
-    content = plt.imread('lena.png')
-    # plt.imshow(content, cmap=plt.cm.binary)
-    # plt.show()
-    hop = 1
-    start_time = interest[route_ID][-2]
-    cost_time = time.time()  # s
-    data = [route_ID, [data_ID, interest_ID, consumer_ID, route_ID, content_name, content, start_time, cost_time, hop]]
-    # print(data_temp)
-    return data
+data = {'type': 'data',
+        # 'interest_ID': 0,
+        'consumer_ID': 0,
+        'route_ID': 0,
+        'content_name': 'r0/0',
+        'content_data': '',
+        'data_hop': 0,
+        'start_time': 0.0
+       }
 
-def Send_data(Infaces, route_ID, data):
-    '''
-        Data_table = {'route_ID': [[data_ID, interest_ID, consumer_ID, route_ID, content_name, start_time, life_time, hop], ...], ... }
-        data = [data_ID, interest_ID, consumer_ID, route_ID, content_name, start_time, life_time, hop]
-    '''
-    Datas = []
-    # The router ID of the data packet is updated to the output interface
-    # data = [data_ID, interest_ID, consumer_ID, route_ID, content_name, start_time, life_time, hop]
-    data[-1] = data[-1] + 1   # hop + 1
-    for i in range(len(Infaces)):
-        Datas.append([Infaces[i], data])
-    return Datas
+class DATA():
+    def __init__(self):
+        self.data = data
 
-# Interest packet processing
-def On_data(inface, route_ID, data):
-    '''
-        Data_table = {'route_ID': [[data_ID, interest_ID, consumer_ID, route_ID, content_name, start_time, life_time, hop], ...],...}
-        data = [data_ID, interest_ID, consumer_ID, route_ID, content_name, start_time, life_time, hop]
-    '''
-    # Check whether there is an entry matching the content name of the data packet in the pit
-    PIT_search_ACK = PIT_search_data(inface, route_ID, data)
-    # data match in PIT
-    if PIT_search_ACK:
-        # CS_cache_data(inface, data)
-        # FIB_update_outface(inface, route_ID, data)
-        Infaces = Forward_data(route_ID, data)
-        Datas = Send_data(Infaces, route_ID, data)
-        # print(Datas)
-        PIT_entry_Remove(route_ID, data)
+    def Create_data(self, route_ID, interest):
+        '''
+        interest = {'type': 'interest', 'interest_ID': 0, 'consumer_ID': 0, 'route_ID': 0, 'content_name': 'r0/0',
+                     'interest_hop': 0, 'life_hop': 5, 'start_time': 0.0}
+        data = {'type': 'data', 'consumer_ID': 0, 'route_ID': 0, 'content_name': 'r0/0', 'content_data': '',
+                'data_hop': 0, 'start_time': 0.0}
+        '''
+        self.data['type'] = 'data'
+        self.data['consumer_ID'] = interest['consumer_ID']
+        self.data['route_ID'] = route_ID
+        self.data['content_name'] = interest['content_name']
+        content = plt.imread('lena.png')
+        # plt.imshow(content, cmap=plt.cm.binary)
+        # plt.show()
+        self.data['content_data'] = content
+        self.data['data_hop'] = 0
+        self.data['start_time'] = interest['start_time']
+        return self.data
+
+    def Send_data(self, Infaces, route_ID, data):
+        '''
+        data = {'type': 'data', 'consumer_ID': 0, 'route_ID': 0, 'content_name': 'r0/0', 'content_data': '',
+                'data_hop': 0, 'start_time': 0.0}
+        '''
+        Datas = []
+        data['data_hop'] += 1
+        data['route_ID'] = route_ID
+        for i in range(len(Infaces)):
+            Datas.append([Infaces[i], data])
         return Datas
-    # data miss in PIT
-    else:
-        # fib_data(inface, data)
-        Drop_data(inface, data)
-        packet = []
-        return packet
+
+    # data packet processing
+    def On_data(self, inface, route_ID, data):
+        '''
+        data = {'type': 'data', 'consumer_ID': 0, 'route_ID': 0, 'content_name': 'r0/0', 'content_data': '',
+                'data_hop': 0, 'start_time': 0.0}
+        '''
+        Pit = PIT()
+        Forward = FORWARD()
+
+        # Check whether there is an entry matching the content name of the data packet in the pit
+        PIT_search_ACK = Pit.Search_pit_data(data)
+        # data match in PIT
+        if PIT_search_ACK:
+            ############################################################
+            # CS_cache_data(inface, data)
+            # FIB_update_outface(inface, route_ID, data)
+            ############################################################
+            Infaces = Forward.Forward_data(data)
+            Datas = self.Send_data(Infaces, route_ID, data)
+            Pit.Remove_pit_entry(data)
+            return Datas
+        # data miss in PIT
+        else:
+            # fib_data(inface, data)
+            self.Drop_data(inface, data)
+            packet = []
+            return packet
 
 
 
-
-def Drop_data(inface, data):
-    print('2')
+    def Drop_data(self, inface, data):
+        print('Drop_data')
 
 if __name__ == '__main__':
     # Create_data(inface, route_ID= 'r0', interest = ['i0', 'c0', 'r0', 'r1/1', 10., 100.])
-    On_data(inface= 'r0',route_ID= 'r0', data=  ['d','i0', 'c0', 'r0', 'r1/1', 10., 100., 1.])
+    # On_data(inface= 'r0',route_ID= 'r0', data=  ['d','i0', 'c0', 'r0', 'r1/1', 10., 100., 1.])
     print('data')
 
 
