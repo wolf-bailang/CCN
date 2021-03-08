@@ -3,8 +3,8 @@ from __future__ import print_function
 import time
 import Table
 
-fib = {'content_name': [[0, 0]]
-      }
+#fib = {'content_name': [[0, 0]]
+#      }
 ##################################################################################################
 '''
 list = [{ "name" : "Taobao", "cost0" : 100, 'outface0': 1, "cost1" : 100, 'outface1': 2},
@@ -15,10 +15,15 @@ list = [{ "name" : "Taobao", "cost0" : 100, 'outface0': 1, "cost1" : 100, 'outfa
 ##################################################################################################
 class FIB():
     def __init__(self):
-        self.fib = fib
+        self.fib = {}
 
-
-
+    def Creat_FIB(self, route_ID):
+        '''
+        print('r'+str(route_ID)+' fib')
+        print(self.fib)
+        print(' ')
+        '''
+        return self.fib
 
     def Get_fib_entry(self, content_name):
         '''
@@ -29,12 +34,15 @@ class FIB():
         FIB_entry = self.fib[content_name]
         return FIB_entry
 
+
+
+    '''
     def Init_fib(self):
-        '''
+        
             Network = [['r0', ['r1', 'r2']], ['r1' ,['r0', 'r2']], ['r2' ,['r0', 'r1']]]
             FIB = {'route_ID': [[content_name,[[cost, outface], ...]], ...], ... }
             fib = [[content_name, [[cost, outface], ...]], ...]
-        '''
+        
         for i in range(len(Table.Network)):
             route_ID = Table.Network[i][0]
             face = Table.Network[i][1]
@@ -56,12 +64,12 @@ class FIB():
 
     # The outface is updated to fib
     def Update_fib_outface(self, inface, route_ID, data):
-        '''
+        
             Data_table = {'route_ID': [[interest_ID, consumer_ID, route_ID, content_name, start_time, life_time, hop], ...],...}
             data = [interest_ID, consumer_ID, route_ID, content_name, start_time, life_time, hop]
             FIB = {'route_ID': [[content_name,[[cost, outface], ...]], ...], ... }
             fib = [[content_name, [[cost, outface], ...]], ...]
-        '''
+        
         fib = Table.FIB[route_ID]
         content_name = data[3]
         now_time = time.time()  # s
@@ -87,13 +95,13 @@ class FIB():
                 # print(Table.FIB)
 
     def Search_fib_interest(self, inface, route_ID, interest):
-        '''
+        
             inface = route_ID
             Interest_table = {'route_ID': [[interest_ID, consumer_ID, route_ID, content_name, start_time, life_time], ...], ... }
             interest = [interest_ID, consumer_ID, route_ID, content_name, start_time, life_time]
             FIB = {'route_ID': [[content_name,[[cost, outface], ...]], ...], ... }
             fib = [[content_name, [[cost, outface], ...]], ...]
-        '''
+        
         # Get the FIB record table of this router
         fib = Table.FIB[route_ID]
         # print(fib_entry)
@@ -113,11 +121,11 @@ class FIB():
 
 
     def Search_fib_data(self, inface, data):
-        '''
+        
             inface = route_ID
             data = {'route_ID': [interest_ID, consumer_ID, route_ID, content_name, start_time, life_time, hop]}
             pit = {'route_ID': [content_name,[inface],[outface]], [content_name,[inface],[outface]]}
-        '''
+        
         pit_entry = pit[inface]
         # print(pit_entry)
         content_name = data[inface][-3]
@@ -133,6 +141,7 @@ class FIB():
         # fib_entry[i][1].append(inface)  # Merge_pit_entry(i, inface)
         # Drop_data(inface, data)
         return False
+    '''
 
 if __name__ == '__main__':
     """

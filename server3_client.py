@@ -5,9 +5,9 @@ import queue
 import socket
 
 def Network_init(route_num): #route_num, content_num
-    network = [['r0', ['r1', 'r3']], ['r1', ['r0', 'r2', 'r3']], ['r2', ['r1', 'r4']], ['r3', ['r0', 'r1', 'r5']],
+    network = {['r0', ['r1', 'r3']], ['r1', ['r0', 'r2', 'r3']], ['r2', ['r1', 'r4']], ['r3', ['r0', 'r1', 'r5']],
                ['r4', ['r2', 'r5', 'r6']], ['r5', ['r3', 'r4', 'r5']], ['r6', ['r4', 'r7']], ['r7', ['r6', 'r8', 'r11']],
-               ['r8', ['r5', 'r7', 'r9']], ['r9', ['r8', 'r10']], ['r10', ['r9', 'r11']], ['r11', ['r7', 'r10']]]
+               ['r8', ['r5', 'r7', 'r9']], ['r9', ['r8', 'r10']], ['r10', ['r9', 'r11']], ['r11', ['r7', 'r10']]}
 
 #平行接收
 class Server_accept(threading.Thread):
@@ -35,7 +35,7 @@ class TServer(threading.Thread):
       threading.Thread.__init__(self)
       self.socket = '127.0.0.1'
       self.address= 8000 + serverID
-      self.serverID = 'r' + str(serverID)
+      self.serverID = serverID #'r' + str(serverID)
       self.lock = lock
 
   def run(self):

@@ -14,6 +14,7 @@ from ps import PS
 from data import DATA
 from forward import FORWARD
 
+'''
 interest = {'type': 'interest',
             'interest_ID': 0,
             'consumer_ID': 0,
@@ -23,11 +24,12 @@ interest = {'type': 'interest',
             'life_hop': 0,
             'start_time': 0.0
            }
+'''
 
 class INTEREST():
     def __init__(self):
         self.interest_ID_count = 0
-        self.interest = interest
+        self.interest = {}
 
     # Consumer generated interest packet
     def Generate_interest(self, route_ID, frequency, content_num):
@@ -36,19 +38,22 @@ class INTEREST():
                      'interest_hop': 0, 'life_hop': 5, 'start_time': 0.0}
         '''
         Interests = []
-        interest_temp = {'type': 'interest', 'interest_ID': 0, 'consumer_ID': 0, 'route_ID': 0, 'content_name': '',
+        interest_temp = {'type': "interest", 'interest_ID': 0, 'consumer_ID': 0, 'route_ID': 0, 'content_name': '',
                          'interest_hop': 0, 'life_hop': 0, 'start_time': 0.0}
 
         interest_temp['type'] = 'interest'
         interest_temp['consumer_ID'] = route_ID
         interest_temp['interest_hop'] = 0
         interest_temp['life_hop'] = 5
-        for i in frequency:
+        for i in range(frequency):
             self.interest_ID_count += 1
             interest_temp['interest_ID'] = self.interest_ID_count
             interest_temp['route_ID'] = route_ID
-            index = np.random.randint(0, content_num)
-            interest_temp['content_name'] = Table.Content_table[index]
+            #index = np.random.randint(0, content_num)
+            #interest_temp['content_name'] = Table.Content_table[index]
+            index1 = np.random.randint(0, 12)
+            index = np.random.randint(0, 100)
+            interest_temp['content_name'] = 'r'+str(index1)+'/'+str(index)
             interest_temp['start_time'] = time.time()
             Interests.append(interest_temp)
         return Interests
@@ -67,7 +72,7 @@ class INTEREST():
             # Drop interest
             return False
 
-    def Send_interest(self, Outfaces, route_ID, interest):
+    def Send_interest(self, pit, Outfaces, route_ID, interest):
         '''
         interest = {'type': 'interest', 'interest_ID': 0, 'consumer_ID': 0, 'route_ID': 0, 'content_name': 'r0/0',
                      'interest_hop': 0, 'life_hop': 5, 'start_time': 0.0}
@@ -81,11 +86,11 @@ class INTEREST():
             Interests.append([Outfaces[i], interest])
         # The outface is updated to pit
         Pit = PIT()
-        Pit.Update_pit_outface(Outfaces, interest)
+        Pit.Update_pit_outface(pit, Outfaces, interest)
         return Interests
 
     # Interest packet processing
-    def On_interest(self, route_ID, interest):
+    def On_interest(self, route_ID, interest, tables):
         '''
         interest = {'type': 'interest', 'interest_ID': 0, 'consumer_ID': 0, 'route_ID': 0, 'content_name': 'r0/0',
                     'interest_hop': 0, 'life_hop': 5, 'start_time': 0.0}
@@ -98,9 +103,19 @@ class INTEREST():
         Forward = FORWARD()
         Interest = INTEREST()
 
+        network, ps, pit, fib = tables
+        # ps = Ps.Get_ps()
+        print('r' + str(route_ID) + ' ps')
+        print(ps)
+        # pit = Pit.Get_pit()
+        print('r' + str(route_ID) + ' pit')
+        print(pit)
+        print(interest)
+        print('')
+
         content_name = interest['content_name']
         # Find the data of the content name in ps
-        Search_ps_ACK = Ps.Search_ps_interest(content_name)
+        Search_ps_ACK = Ps.Search_ps_interest(ps, content_name)
         ########################################################
         # if Search_ps_ACK == False:
             # Search_cs_ACK = Search_cs_interest(content_name)
@@ -112,17 +127,18 @@ class INTEREST():
             inface = interest['route_ID']
             # Infaces = Forward.Forward_data(data)
             Datas = Data.Send_data(inface, route_ID, data)
+            print('interest hit in PS')
             return Datas
         # interest miss in PS
         else:
             print('interest miss in PS')
         # Check whether there is an entry matching the content name of the interest packet in the pit
-        Search_pit_ACK = Pit.Search_pit_interest(interest)
+        Search_pit_ACK = Pit.Search_pit_interest(pit, interest)
         # interest miss in PIT
         if Search_pit_ACK == True:
             # Forward the interest packet to the next router
-            Outfaces = Forward.Forward_interest(route_ID, interest)
-            Interests = Interest.Send_interest(Outfaces, route_ID, interest)
+            Outfaces = Forward.Forward_interest(network, route_ID, interest)
+            Interests = Interest.Send_interest(pit, Outfaces, route_ID, interest)
             return Interests
         # interest match in PIT
         else:

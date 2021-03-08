@@ -10,12 +10,18 @@ from pit import *
 from ps import PS
 from fib import FIB
 
-network = {'':[0,0]
-          }
+#network = {'':[0,0]
+#          }
 
 class NETWORK():
     def __init__(self):
-        self.network = network
+        self.network = {}
+
+    def Creat_network(self):
+        self.network = {'r0':[1, 3], 'r1': [0, 2, 3], 'r2': [1, 4], 'r3': [0, 1, 5],
+                        'r4': [2, 5, 6], 'r5': [3, 4, 5], 'r6': [4, 7], 'r7': [6, 8, 11],
+                        'r8': [5, 7, 9], 'r9': [8, 10], 'r10': [9, 11], 'r11': [7, 10]}
+        return self.network
 
     def Get_network(self):
         return self.network
@@ -27,11 +33,11 @@ class NETWORK():
                   }
         '''
         Fib = FIB()
-        self.network = [['r0', ['r1', 'r3']], ['r1', ['r0', 'r2', 'r3']], ['r2', ['r1', 'r4']], ['r3', ['r0', 'r1', 'r5']],
-                   ['r4', ['r2', 'r5', 'r6']], ['r5', ['r3', 'r4', 'r5']], ['r6', ['r4', 'r7']], ['r7', ['r6', 'r8', 'r11']],
-                   ['r8', ['r5', 'r7', 'r9']], ['r9', ['r8', 'r10']], ['r10', ['r9', 'r11']], ['r11', ['r7', 'r10']]]
+        self.network = {'r0':['r1', 'r3'], 'r1': ['r0', 'r2', 'r3'], 'r2': ['r1', 'r4'], 'r3': ['r0', 'r1', 'r5'],
+                        'r4': ['r2', 'r5', 'r6'], 'r5': ['r3', 'r4', 'r5'], 'r6': ['r4', 'r7'], 'r7': ['r6', 'r8', 'r11'],
+                        'r8': ['r5', 'r7', 'r9'], 'r9': ['r8', 'r10'], 'r10': ['r9', 'r11'], 'r11': ['r7', 'r10']}
 
-        Fib.Init_fib()
+        # Fib.Init_fib()
         return self.network
 
 

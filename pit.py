@@ -5,30 +5,42 @@
 
 from __future__ import print_function
 
-import time
-import numpy as np
-import Table
-from interest import INTEREST
+# import time
+# import numpy as np
+# import Table
+# from interest import INTEREST
 
-pit = {'content_name': [[0], [0]]
-      }
+# pit = {'content_name': [[0], [0]]
+#       }
 
 class PIT():
     def __init__(self):
-        self.pit = pit
+        self.pit = {}
+
+    def Creat_pit(self, route_ID):
+        '''
+        print('r'+str(route_ID)+' pit')
+        print(self.pit)
+        print(' ')
+        '''
+        return self.pit
+
+    def Get_pit(self):
+        return self.pit
 
     def Get_pit_entry(self, content_name):
         PIT_entry = self.pit[content_name]
         return PIT_entry
 
     # The outface is updated to pit
-    def Update_pit_outface(self, Outfaces, interest):
+    def Update_pit_outface(self, pit, Outfaces, interest):
         '''
         interest = {'type': 'interest', 'interest_ID': 0, 'consumer_ID': 0, 'route_ID': 0, 'content_name': 'r0/0',
                     'interest_hop': 0, 'life_hop': 5, 'start_time': 0.0}
         pit = {'content_name': [[inface, ...], [outface, ...]], ...}
         Outfaces = [outface, ...]
         '''
+        self.pit = pit
         content_name = interest['content_name']
         # Check whether there is a record of an entry with the same name as the interest packet in the PIT
         pit_entry = self.pit[content_name]
@@ -63,12 +75,13 @@ class PIT():
         self.pit.update(new_dict)
 
     # Check whether there is an entry matching the content name of the interest packet in the pit
-    def Search_pit_interest(self, interest):
+    def Search_pit_interest(self, pit, interest):
         """
         interest = {'type': 'interest', 'interest_ID': 0, 'consumer_ID': 0, 'route_ID': 0, 'content_name': 'r0/0',
                     'interest_hop': 0, 'life_hop': 5, 'start_time': 0.0}
         pit = {'content_name': [[inface, ...], [outface, ...]], ...}
         """
+        self.pit = pit
         # Get the requested content name of the interest packet
         content_name = interest['content_name']
         # Check whether there is a record of an entry with the same name as the interest packet in the PIT
@@ -81,11 +94,12 @@ class PIT():
             self.Creat_pit_entry(interest)
             return True
 
-    def Search_pit_data(self, data):
+    def Search_pit_data(self, pit, data):
         '''
         data = {'type': 'data', 'consumer_ID': 0, 'route_ID': 0, 'content_name': 'r0/0', 'content_data': '',
                 'data_hop': 0, 'start_time': 0.0}
         '''
+        self.pit = pit
         # Get the requested content name of the interest packet
         content_name = data['content_name']
         # Check whether there is a record of an entry with the same name as the interest packet in the PIT
@@ -95,10 +109,11 @@ class PIT():
             return False
 
     # The content_name entry is removed to pit
-    def Remove_pit_entry(self, data):
+    def Remove_pit_entry(self, pit, data):
         '''
         pit = {'content_name': [[inface, ...], [outface, ...]], ...}
         '''
+        self.pit = pit
         content_name = data['content_name']
         # Delete content_name entry in pit
         del self.pit[content_name]

@@ -7,37 +7,43 @@ from __future__ import print_function
 
 import Table
 
-ps = []
-
 class PS():
     def __init__(self):
         # self.route_num = route_num
         # self.content_num = content_num
-        self.PS = ps
+        self.ps = []
 
     # Producer generates unique content name
-    def Init_ps(self, route_ID, route_num, content_num):
+    def Creat_ps(self, route_ID, route_num, content_num):
         '''
         PS = [content_name,...]
         '''
-        for i in range(route_num):
+        # for i in range(route_num):
             # route_ID_name = 'r' + str(route_ID)
-            for j in range(content_num):
-                # Generate content name
-                content_name = route_ID + '/' + str(j)
-                self.PS.append(content_name)
-        print(self.PS)
-        # return  self.PS
+        for j in range(content_num):
+            # Generate content name
+            content_name = 'r' + str(route_ID) + '/' + str(j)
+            self.ps.append(content_name)
+        '''
+        print('r' + str(route_ID) + ' ps')
+        print(self.ps)
+        print(' ')
+        '''
+        return self.ps
 
-    def Search_ps_interest(self, content_name):
+    def Get_ps(self):
+        return self.ps
+
+    def Search_ps_interest(self, ps, content_name):
         '''
         ps = [content_name,...]
         interest = {'type': 'interest', 'interest_ID': 0, 'consumer_ID': 0, 'route_ID': 0, 'content_name': 'r0/0',
                     'interest_hop': 0, 'life_hop': 5, 'start_time': 0.0}
         '''
         # Check if there is data matching the content name in ps
-        for i in range(len(self.PS)):
-            if content_name == self.PS[i]:
+        self.ps = ps
+        for i in range(len(self.ps)):
+            if content_name == self.ps[i]:
                 return True
         # No data for content name found in ps
         return False

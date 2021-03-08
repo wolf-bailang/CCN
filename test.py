@@ -9,5 +9,7 @@ if __name__ == '__main__':
     content_name = interest['content_name']
 
     new_dict = {content_name: [[inface], []]}
-    pit.update(new_dict)
-    print(pit)
+    # pit.update(new_dict)
+    a = [[0, {'b': 'yui'}], [1, {'c': 1}]]
+    if a[0][1]['b'] == 'yui':
+        print('1')

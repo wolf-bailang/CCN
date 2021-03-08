@@ -37,7 +37,7 @@ class DATA():
         self.data['consumer_ID'] = interest['consumer_ID']
         self.data['route_ID'] = route_ID
         self.data['content_name'] = interest['content_name']
-        content = plt.imread('lena.png')
+        content = '' # plt.imread('lena.png')
         # plt.imshow(content, cmap=plt.cm.binary)
         # plt.show()
         self.data['content_data'] = content
@@ -58,25 +58,28 @@ class DATA():
         return Datas
 
     # data packet processing
-    def On_data(self, inface, route_ID, data):
+    def On_data(self, inface, route_ID, data, tables):
         '''
         data = {'type': 'data', 'consumer_ID': 0, 'route_ID': 0, 'content_name': 'r0/0', 'content_data': '',
                 'data_hop': 0, 'start_time': 0.0}
         '''
         Pit = PIT()
         Forward = FORWARD()
+        network, ps, pit, fib = tables
+        print(data)
+        print('')
 
         # Check whether there is an entry matching the content name of the data packet in the pit
-        PIT_search_ACK = Pit.Search_pit_data(data)
+        PIT_search_ACK = Pit.Search_pit_data(pit, data)
         # data match in PIT
         if PIT_search_ACK:
             ############################################################
             # CS_cache_data(inface, data)
             # FIB_update_outface(inface, route_ID, data)
             ############################################################
-            Infaces = Forward.Forward_data(data)
+            Infaces = Forward.Forward_data(pit, data)
             Datas = self.Send_data(Infaces, route_ID, data)
-            Pit.Remove_pit_entry(data)
+            Pit.Remove_pit_entry(pit, data)
             return Datas
         # data miss in PIT
         else:

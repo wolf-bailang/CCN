@@ -3,15 +3,16 @@ import time
 
 from server import Server
 # from generate_data import *
-from ps import PS
-from network import Network
+# from ps import PS
+# from network import NETWORK
 
 
 def main():
-    server_num = 4
-    frequency = 10  # 10/s
-    route_num = 4
-    content_num = 1200
+    server_num = 12
+    frequency = 2  # 10/s
+    route_num = server_num
+    content_num = 100
+    run_time = 10
     start_time = time.time()
     # network = Network(server_num)
     # networks = network.Network_init()
@@ -27,15 +28,12 @@ def main():
         server = Server(i)
         server.start()
         server_list.append(server)
-
-        # ps = PS()
-        # ps.PS_init(i, route_num, content_num)
         
     for i in server_list:
         i.start_network(start_time, frequency, content_num)
         
     while True:
-        if time.time() - start_time > 5:
+        if time.time() - start_time > int(run_time):
             for i in server_list:
                 i.join()
             break
