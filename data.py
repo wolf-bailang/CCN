@@ -12,6 +12,7 @@ import Table
 from pit import PIT
 from forward import FORWARD
 
+'''
 data = {'type': 'data',
         # 'interest_ID': 0,
         'consumer_ID': 0,
@@ -21,18 +22,22 @@ data = {'type': 'data',
         'data_hop': 0,
         'start_time': 0.0
        }
+'''
 
 class DATA():
     def __init__(self):
-        self.data = data
+        self.data = {}
 
     def Create_data(self, route_ID, interest):
         '''
         interest = {'type': 'interest', 'interest_ID': 0, 'consumer_ID': 0, 'route_ID': 0, 'content_name': 'r0/0',
                      'interest_hop': 0, 'life_hop': 5, 'start_time': 0.0}
         data = {'type': 'data', 'consumer_ID': 0, 'route_ID': 0, 'content_name': 'r0/0', 'content_data': '',
-                'data_hop': 0, 'start_time': 0.0}
+                'data_hop': 0, 'start_time': 0.0, 'path': ''}
         '''
+        data = {'type': 'data', 'consumer_ID': 0, 'route_ID': 0, 'content_name': 'r0/0', 'content_data': '',
+                'data_hop': 0, 'start_time': 0, 'path': ''}
+        self.data = data
         self.data['type'] = 'data'
         self.data['consumer_ID'] = interest['consumer_ID']
         self.data['route_ID'] = route_ID
@@ -43,6 +48,7 @@ class DATA():
         self.data['content_data'] = content
         self.data['data_hop'] = 0
         self.data['start_time'] = interest['start_time']
+        self.data['path'] += '/'+str(route_ID)
         return self.data
 
     def Send_data(self, Infaces, route_ID, data):
@@ -53,7 +59,9 @@ class DATA():
         Datas = []
         data['data_hop'] += 1
         data['route_ID'] = route_ID
+        # print(Infaces)
         for i in range(len(Infaces)):
+            # print(' i= ' + str(i))
             Datas.append([Infaces[i], data])
         return Datas
 
@@ -66,8 +74,10 @@ class DATA():
         Pit = PIT()
         Forward = FORWARD()
         network, ps, pit, fib = tables
-        print(data)
-        print('')
+        #print(data)
+        #print('')
+
+        consumer_ID = data['consumer_ID']
 
         # Check whether there is an entry matching the content name of the data packet in the pit
         PIT_search_ACK = Pit.Search_pit_data(pit, data)
@@ -77,17 +87,24 @@ class DATA():
             # CS_cache_data(inface, data)
             # FIB_update_outface(inface, route_ID, data)
             ############################################################
-            Infaces = Forward.Forward_data(pit, data)
-            Datas = self.Send_data(Infaces, route_ID, data)
-            Pit.Remove_pit_entry(pit, data)
-            return Datas
+            if consumer_ID != route_ID:
+                Infaces = Forward.Forward_data(pit, data)
+                Datas = self.Send_data(Infaces, route_ID, data)
+                Pit.Remove_pit_entry(pit, data)
+                print('data hit in PIT')
+                print(Datas)
+                return Datas
+            else:
+                print('YES consumer')
+                packet = []
+                return packet
         # data miss in PIT
         else:
             # fib_data(inface, data)
+            print('data miss in PIT')
             self.Drop_data(inface, data)
             packet = []
             return packet
-
 
 
     def Drop_data(self, inface, data):

@@ -47,7 +47,7 @@ class Server(threading.Thread):
             start_packets = Interest.Generate_interest(route_ID=self.id, frequency=frequency, content_num=content_num)
             for i in start_packets:
                 self.interest_queue.put(i)
-            time.sleep(1)
+            time.sleep(5)
         '''
         start = time.time()
         while int(time.time() - start) == 2:
@@ -92,18 +92,17 @@ class Server(threading.Thread):
             if len(packet) :
                 if packet[0][1]['type'] == 'data':  # send Datas packet
                     for i in range(len(packet)):
+                        time.sleep(1)
                         send_data = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
                         # packet[i][0] = outface
-                        send_data.connect((self.HOST, packet[i][0]))
+                        send_data.connect((self.HOST, 8000 + packet[i][0]))
                         # packet[i][1] = data
                         send_data.sendall(bytes(json.dumps(packet[i][1]), encoding='utf-8'))
                 elif packet[0][1]['type'] == 'interest':  # send Interests packet
-                    print('1')
-                    print(len(packet))
                     for i in range(len(packet)):
                         send_interest = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
                         # packet[i][0] = outface
-                        send_interest.connect((self.HOST, packet[i][0]))
+                        send_interest.connect((self.HOST, 8000 + packet[i][0]))
                         # packet[i][1] = interest
                         send_interest.sendall(bytes(json.dumps(packet[i][1]), encoding='utf-8'))
             else:  # Drop interest
@@ -119,11 +118,10 @@ class Server(threading.Thread):
             if len(packet) :
                 if packet[0][1]['type'] == 'data':     # send Datas packet
                     for i in range(len(packet)):
+                        time.sleep(1)
                         send_data = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
                         # packet[i][0] = outface
-                        # print('packet[i][0]')
-                        # print(packet[i][0])
-                        send_data.connect((self.HOST, packet[i][0]))
+                        send_data.connect((self.HOST, 8000 + packet[i][0]))
                         # packet[i][1] = data
                         send_data.sendall(bytes(json.dumps(packet[i][1]), encoding='utf-8'))
             else:   # Drop data

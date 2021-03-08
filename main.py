@@ -9,11 +9,11 @@ from server import Server
 
 def main():
     server_num = 12
-    frequency = 2  # 10/s
+    frequency = 1  # 10/s
     route_num = server_num
     content_num = 100
     run_time = 10
-    start_time = time.time()
+    start_time = int(time.time())
     # network = Network(server_num)
     # networks = network.Network_init()
 
@@ -33,7 +33,7 @@ def main():
         i.start_network(start_time, frequency, content_num)
         
     while True:
-        if time.time() - start_time > int(run_time):
+        if int(time.time() - start_time) > run_time:
             for i in server_list:
                 i.join()
             break

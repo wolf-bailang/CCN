@@ -15,12 +15,20 @@ class FORWARD():
                 'data_hop': 0, 'start_time': 0.0}
         pit = {'content_name': [[inface, ...], [outface, ...]], ...}
         '''
+        Infaces = []
+        inface = data['route_ID']
         # Get the requested content name of the data packet
         content_name = data['content_name']
         # Get the pit_entry of this content_name
         Pit = PIT()
-        pit_entry = pit# Pit.Get_pit_entry(content_name)
-        Infaces = pit_entry[0]
+        pit_entry = pit[content_name]   # Pit.Get_pit_entry(content_name)
+        # print('pit_entry')
+        # print(pit_entry)
+        # print(pit_entry[0])
+        for x in pit_entry[0]:
+            if x != inface:
+                Infaces.append(x)
+        # Infaces = pit_entry[0]
         return Infaces
 
     def Forward_interest(self, network, route_ID, interest):
@@ -33,6 +41,8 @@ class FORWARD():
         # Can be optimized
         fib = [[content_name,[[cost, outface], ...]], ...]
         '''
+        Outfaces = []
+        inface = interest['route_ID']
         # Get the fibs record table of this router
         Network = NETWORK()
         network = network # Network.Get_network()
@@ -54,7 +64,9 @@ class FORWARD():
                 # print(Outface)
                 return Outface
         '''
-        Outfaces = FIB_entry
+        for x in FIB_entry:
+            if x != inface:
+                Outfaces.append(x)
         return Outfaces
 
 

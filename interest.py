@@ -39,7 +39,7 @@ class INTEREST():
         '''
         Interests = []
         interest_temp = {'type': "interest", 'interest_ID': 0, 'consumer_ID': 0, 'route_ID': 0, 'content_name': '',
-                         'interest_hop': 0, 'life_hop': 0, 'start_time': 0.0}
+                         'interest_hop': 0, 'life_hop': 0, 'start_time': 0, 'path': ''}
 
         interest_temp['type'] = 'interest'
         interest_temp['consumer_ID'] = route_ID
@@ -54,7 +54,8 @@ class INTEREST():
             index1 = np.random.randint(0, 12)
             index = np.random.randint(0, 100)
             interest_temp['content_name'] = 'r'+str(index1)+'/'+str(index)
-            interest_temp['start_time'] = time.time()
+            interest_temp['start_time'] = int(time.time())
+            interest_temp['path'] = str(route_ID)
             Interests.append(interest_temp)
         return Interests
 
@@ -82,6 +83,7 @@ class INTEREST():
         Interests = []
         interest['route_ID'] = route_ID
         interest['interest_hop'] += 1
+        interest['path'] += '/'+str(route_ID)
         for i in range(len(Outfaces)):
             Interests.append([Outfaces[i], interest])
         # The outface is updated to pit
@@ -105,13 +107,13 @@ class INTEREST():
 
         network, ps, pit, fib = tables
         # ps = Ps.Get_ps()
-        print('r' + str(route_ID) + ' ps')
-        print(ps)
+        #print('r' + str(route_ID) + ' ps')
+        #print(ps)
         # pit = Pit.Get_pit()
-        print('r' + str(route_ID) + ' pit')
-        print(pit)
-        print(interest)
-        print('')
+        #print('r' + str(route_ID) + ' pit')
+        #print(pit)
+        #print(interest)
+        #print('')
 
         content_name = interest['content_name']
         # Find the data of the content name in ps
@@ -124,10 +126,11 @@ class INTEREST():
         if Search_ps_ACK == True:
             # Return data packet
             data = Data.Create_data(route_ID, interest)
-            inface = interest['route_ID']
+            inface = [interest['route_ID']]
             # Infaces = Forward.Forward_data(data)
             Datas = Data.Send_data(inface, route_ID, data)
             print('interest hit in PS')
+            print(Datas)
             return Datas
         # interest miss in PS
         else:
@@ -139,10 +142,14 @@ class INTEREST():
             # Forward the interest packet to the next router
             Outfaces = Forward.Forward_interest(network, route_ID, interest)
             Interests = Interest.Send_interest(pit, Outfaces, route_ID, interest)
+            print('interest miss in PIT')
+            print(Interests)
             return Interests
         # interest match in PIT
         else:
             # Drop_interest(in PSroute_ID, interest)
+            print('interest match in PIT')
+            self.Drop_interest(route_ID, interest)
             packet = []
             return packet
 
@@ -166,7 +173,7 @@ class INTEREST():
                 # print(Table.Interest_table)
                 break
 
-    def Drop_interest(self, inface, route_ID, interest):
+    def Drop_interest(self, route_ID, interest):
         print('Drop_interest')
 
 
