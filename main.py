@@ -5,14 +5,43 @@ from server import Server
 # from generate_data import *
 # from ps import PS
 # from network import NETWORK
+import json
 
+def load_peremiters():
+    with open('./peremiters.json', 'r', encoding='utf8')as fp:
+        peremiters = json.load(fp)
+    return peremiters
+
+def input_producer_contents():
+    with open('./producer_contents.json', 'r', encoding='utf8')as fp:
+        producer_contents = json.load(fp)
+    return producer_contents
+
+def input_interests():
+    with open('./interests.json', 'r', encoding='utf8')as fp:
+        interests = json.load(fp)
+    return interests
 
 def main():
-    server_num = 12
-    frequency = 1  # 10/s
-    route_num = server_num
-    content_num = 100
-    run_time = 10
+    '''
+    peremiters = {"route_num": 12, "frequency": 3, "content_num": 100, "run_time": 10, "queue_size": 10,
+                  "cache_size": 10, "FIB_size": 10}
+    '''
+    producer_contents = input_producer_contents()
+    interests = input_interests()
+    peremiters = load_peremiters()
+
+    server_num = peremiters['route_num']
+    frequency = peremiters['frequency']  # 10/s
+    route_num = peremiters['route_num']
+    content_num = peremiters['content_num']
+    run_time = peremiters['run_time']
+    queue_size = peremiters['queue_size']
+    cache_size = peremiters['cache_size']
+    fib_size = peremiters['fib_size']
+    server_num = route_num
+
+    input_interest_list = 1
     start_time = int(time.time())
     # network = Network(server_num)
     # networks = network.Network_init()
@@ -25,12 +54,12 @@ def main():
 
     for i in range(server_num):
         # interest_data = {"data": data[2][2], "id": 8000 + i, "time": time.time()}
-        server = Server(i)
+        server = Server(i, producer_contents)
         server.start()
         server_list.append(server)
         
     for i in server_list:
-        i.start_network(start_time, frequency, content_num)
+        i.start_network(start_time, frequency, content_num, route_num, interests)
         
     while True:
         if int(time.time() - start_time) > run_time:

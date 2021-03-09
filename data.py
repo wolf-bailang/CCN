@@ -48,7 +48,7 @@ class DATA():
         self.data['content_data'] = content
         self.data['data_hop'] = 0
         self.data['start_time'] = interest['start_time']
-        self.data['path'] += '/'+str(route_ID)
+        self.data['path'] = ''
         return self.data
 
     def Send_data(self, Infaces, route_ID, data):
@@ -59,6 +59,7 @@ class DATA():
         Datas = []
         data['data_hop'] += 1
         data['route_ID'] = route_ID
+        self.data['path'] += str(route_ID) + '/'
         # print(Infaces)
         for i in range(len(Infaces)):
             # print(' i= ' + str(i))

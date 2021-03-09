@@ -32,28 +32,43 @@ class INTEREST():
         self.interest = {}
 
     # Consumer generated interest packet
-    def Generate_interest(self, route_ID, frequency, content_num):
+    def Generate_interest(self, route_ID, frequency, content_num, route_num, interest):
         '''
         interest = {'type': 'interest', 'interest_ID': 0, 'consumer_ID': 0, 'route_ID': 0, 'content_name': 'r0/0',
                      'interest_hop': 0, 'life_hop': 5, 'start_time': 0.0}
-        '''
-        Interests = []
-        interest_temp = {'type': "interest", 'interest_ID': 0, 'consumer_ID': 0, 'route_ID': 0, 'content_name': '',
-                         'interest_hop': 0, 'life_hop': 0, 'start_time': 0, 'path': ''}
 
-        interest_temp['type'] = 'interest'
-        interest_temp['consumer_ID'] = route_ID
-        interest_temp['interest_hop'] = 0
-        interest_temp['life_hop'] = 5
-        for i in range(frequency):
-            self.interest_ID_count += 1
+        Interests = []
+        for i in range(0, frequency):
+            interest_temp = {'type': "interest", 'interest_ID': 0, 'consumer_ID': 0, 'route_ID': 0, 'content_name': '',
+                             'interest_hop': 0, 'life_hop': 0, 'start_time': 0, 'path': ''}
+            interest_temp['type'] = 'interest'
+            interest_temp['consumer_ID'] = route_ID
+            interest_temp['interest_hop'] = 0
+            interest_temp['life_hop'] = 5
             interest_temp['interest_ID'] = self.interest_ID_count
+            self.interest_ID_count += 1
             interest_temp['route_ID'] = route_ID
             #index = np.random.randint(0, content_num)
             #interest_temp['content_name'] = Table.Content_table[index]
-            index1 = np.random.randint(0, 12)
-            index = np.random.randint(0, 100)
+            index1 = np.random.randint(0, route_num)
+            index = np.random.randint(0, content_num)
             interest_temp['content_name'] = 'r'+str(index1)+'/'+str(index)
+            interest_temp['start_time'] = int(time.time())
+            interest_temp['path'] = str(route_ID)
+            Interests.append(interest_temp)
+        return Interests
+        '''
+        Interests = []
+        for i in range(0, len(interest)):
+            interest_temp = {'type': "interest", 'interest_ID': '', 'consumer_ID': 0, 'route_ID': 0, 'content_name': '',
+                             'interest_hop': 0, 'life_hop': 0, 'start_time': 0, 'path': ''}
+            interest_temp['type'] = 'interest'
+            interest_temp['consumer_ID'] = route_ID
+            interest_temp['interest_hop'] = 0
+            interest_temp['life_hop'] = 5
+            interest_temp['interest_ID'] = interest[i]['interest_ID']
+            interest_temp['route_ID'] = route_ID
+            interest_temp['content_name'] = interest[i]['content_name']
             interest_temp['start_time'] = int(time.time())
             interest_temp['path'] = str(route_ID)
             Interests.append(interest_temp)
