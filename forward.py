@@ -65,7 +65,7 @@ class FORWARD():
                 return Outface
         '''
         for x in FIB_entry:
-            if x != inface:
+            if x != inface or x != route_ID:
                 Outfaces.append(x)
         return Outfaces
 

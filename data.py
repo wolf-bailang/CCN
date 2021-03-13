@@ -36,7 +36,7 @@ class DATA():
                 'data_hop': 0, 'start_time': 0.0, 'path': ''}
         '''
         data = {'type': 'data', 'consumer_ID': 0, 'route_ID': 0, 'content_name': 'r0/0', 'content_data': '',
-                'data_hop': 0, 'start_time': 0, 'path': ''}
+                'data_hop': 0, 'start_time': 0,'path': ''}
         self.data = data
         self.data['type'] = 'data'
         self.data['consumer_ID'] = interest['consumer_ID']
@@ -48,7 +48,7 @@ class DATA():
         self.data['content_data'] = content
         self.data['data_hop'] = 0
         self.data['start_time'] = interest['start_time']
-        self.data['path'] += '/'+str(route_ID)
+        self.data['path'] = ''
         return self.data
 
     def Send_data(self, Infaces, route_ID, data):
@@ -59,6 +59,7 @@ class DATA():
         Datas = []
         data['data_hop'] += 1
         data['route_ID'] = route_ID
+        data['path'] += str(route_ID)+'/'
         # print(Infaces)
         for i in range(len(Infaces)):
             # print(' i= ' + str(i))
@@ -87,10 +88,10 @@ class DATA():
             # CS_cache_data(inface, data)
             # FIB_update_outface(inface, route_ID, data)
             ############################################################
+            Infaces = Forward.Forward_data(pit, data)
+            Pit.Remove_pit_entry(pit, data)
             if consumer_ID != route_ID:
-                Infaces = Forward.Forward_data(pit, data)
                 Datas = self.Send_data(Infaces, route_ID, data)
-                Pit.Remove_pit_entry(pit, data)
                 print('data hit in PIT')
                 print(Datas)
                 return Datas
@@ -101,6 +102,7 @@ class DATA():
         # data miss in PIT
         else:
             # fib_data(inface, data)
+            # Pit.Remove_pit_entry(pit, data)
             print('data miss in PIT')
             self.Drop_data(inface, data)
             packet = []

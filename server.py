@@ -18,7 +18,7 @@ network = [['r0', ['r1', 'r2']], ['r1', ['r0', 'r3']], ['r2', ['r0', 'r3']], ['r
 
 class Server(threading.Thread):
 
-    def __init__(self, serverID, HOST='127.0.0.1'):
+    def __init__(self, serverID, producer_contents, HOST='127.0.0.1'):
         threading.Thread.__init__(self)
         self.HOST = HOST
         self.PORT= 8000 + serverID
@@ -32,7 +32,9 @@ class Server(threading.Thread):
         fib = FIB()
         self.network = Network.Creat_network()
         self.pit = pit.Creat_pit(route_ID=self.id)
-        self.ps = ps.Creat_ps(route_ID=self.id, route_num=12, content_num=100)
+        producer_content = producer_contents['r'+str(self.id)]
+        self.ps = ps.Creat_ps(route_ID=self.id, route_num=12, content_num=100, producer_content=producer_content)
+        self.ps = producer_contents['r'+str(self.id)]
         self.fib = fib.Creat_FIB(route_ID=self.id)
         self.Tables = [self.network, self.ps, self.pit, self.fib]
 
@@ -41,13 +43,18 @@ class Server(threading.Thread):
         threading.Thread(target = self.interest_process, daemon=True).start()
         threading.Thread(target = self.data_process, daemon=True).start()
         
-    def start_network(self, run_time, frequency, content_num):
+    def start_network(self, run_time, frequency, content_num, route_num, interests):
         Interest = INTEREST()
-        for i in range(int(run_time)):
-            start_packets = Interest.Generate_interest(route_ID=self.id, frequency=frequency, content_num=content_num)
+        for i in range(int(10)):
+            interest = interests['r' + str(self.id)]
+            start_packets = Interest.Generate_interest(route_ID=self.id, frequency=frequency, content_num=content_num,
+                                                       route_num=route_num, interest=interest)
+            # start_packets = interests['r'+str(self.id)]
+            print('start_packets')
+            print(start_packets)
             for i in start_packets:
                 self.interest_queue.put(i)
-            time.sleep(5)
+            time.sleep(1)
         '''
         start = time.time()
         while int(time.time() - start) == 2:

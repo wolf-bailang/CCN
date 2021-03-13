@@ -14,21 +14,24 @@ class PS():
         self.ps = []
 
     # Producer generates unique content name
-    def Creat_ps(self, route_ID, route_num, content_num):
+    def Creat_ps(self, route_ID, route_num, content_num, producer_content):
         '''
         PS = [content_name,...]
-        '''
+
         # for i in range(route_num):
             # route_ID_name = 'r' + str(route_ID)
         for j in range(content_num):
             # Generate content name
             content_name = 'r' + str(route_ID) + '/' + str(j)
             self.ps.append(content_name)
-        '''
+
         print('r' + str(route_ID) + ' ps')
         print(self.ps)
         print(' ')
+
+        return self.ps
         '''
+        self.ps = producer_content
         return self.ps
 
     def Get_ps(self):
