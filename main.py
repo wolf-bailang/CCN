@@ -8,17 +8,17 @@ from server import Server
 import json
 
 def load_peremiters():
-    with open('./peremiters.json', 'r', encoding='utf8')as fp:
+    with open('./Input/peremiters.json', 'r', encoding='utf8')as fp:
         peremiters = json.load(fp)
     return peremiters
 
 def input_producer_contents():
-    with open('./producer_contents.json', 'r', encoding='utf8')as fp:
+    with open('./Input/producer_contents.json', 'r', encoding='utf8')as fp:
         producer_contents = json.load(fp)
     return producer_contents
 
 def input_interests():
-    with open('./interests.json', 'r', encoding='utf8')as fp:
+    with open('./Input/interests.json', 'r', encoding='utf8')as fp:
         interests = json.load(fp)
     return interests
 

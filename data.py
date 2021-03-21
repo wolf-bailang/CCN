@@ -27,7 +27,7 @@ data = {'type': 'data',
        }
 '''
 
-data_f = open('Output_data.csv', 'w', encoding='utf-8', newline="")
+data_f = open('./Output/Output_data.csv', 'w', encoding='utf-8', newline="")
 data_csv_writer = csv.writer(data_f)
 data_csv_writer.writerow(["Time", "Type", "Consumer_ID", "Route_ID", "Content_name", "Data_hop",
                           "Path", "Result", "Hit_consumer", "Hit_PIT", "Hit_Miss"])

@@ -28,7 +28,7 @@ interest = {'type': 'interest',
            }
 '''
 
-interest_f = open('Output_interest.csv', 'w', encoding='utf-8', newline="")
+interest_f = open('./Output/Output_interest.csv', 'w', encoding='utf-8', newline="")
 interest_csv_writer = csv.writer(interest_f)
 interest_csv_writer.writerow(["Time", "Type", "Interest_ID", "Consumer_ID", "Route_ID", "Content_name",
                               "Interest_hop", "Path", "Result", "Hit", "Miss"])
