@@ -39,8 +39,9 @@ def main():
     queue_size = peremiters['queue_size']
     cache_size = peremiters['cache_size']
     fib_size = peremiters['fib_size']
+    sizes = [queue_size, cache_size, fib_size]
     server_num = route_num
-    start_time = int(time.time())
+    run_start_time = int(time.time())
     # network = Network(server_num)
     # networks = network.Network_init()
 
@@ -52,24 +53,22 @@ def main():
 
     for i in range(server_num):
         # interest_data = {"data": data[2][2], "id": 8000 + i, "time": time.time()}
-        server = Server(i, producer_contents)
+        server = Server(i, sizes, producer_contents)
         server.start()
         server_list.append(server)
         
     for i in server_list:
-        print('i'+str(i))
-        i.start_network(start_time, frequency, content_num, route_num, interests)
+        # print('i'+str(i))
+        i.start_network(run_start_time, frequency, content_num, route_num, interests)
         # time.sleep(1)
         
     while True:
         print(str(time.time()))
-        print(str(start_time))
-        print(str(int(time.time()) - int(start_time)))
-        # if int(time.time()) - int(start_time) > int(run_time):
-        if int(time.time()) - int(start_time) > 10:
-            #print('111111111111111')
+        print(str(run_start_time))
+        print(str(int(time.time()) - int(run_start_time)))
+        if int(time.time()) - int(run_start_time) > int(run_time):
+        # if int(time.time()) - int(start_time) > 10:
             for i in server_list:
-                #print('222222222222222')
                 i.join()
             break
 

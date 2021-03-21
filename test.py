@@ -1,5 +1,10 @@
 import json
 import numpy as np
+import csv
+
+# 获取列表的第二个元素
+def takeSecond(elem):
+    return elem[1]
 
 if __name__ == '__main__':
     '''
@@ -35,7 +40,7 @@ if __name__ == '__main__':
         producer_contents = json.load(fp)
         print(producer_contents)
     print(producer_contents)
-    '''
+    
 
     ps = {}
     for i in range(12):
@@ -60,6 +65,36 @@ if __name__ == '__main__':
         interests = json.load(fp)
         print(interests)
     print(interests)
+    
+    with open('Output_data.txt', 'a') as file_handle:  # .txt可以不自己新建,代码会自动新建
+        file_handle.write(data2txt)  # 写入
+        file_handle.write('\n')  # 有时放在循环里面需要自动转行，不然会覆盖上一条数据
+
+    f = open('Output_data.csv', 'w', encoding='utf-8', newline="")
+    csv_writer = csv.writer(f)
+    csv_writer.writerow(["Time", "Type", "性别"])
+    data2str= ['1', '2', '3']
+    csv_writer.writerow(data2str)
+    f.close()
+    
+    
+    cs = [['4',2,3,4,1], ['2',3,4,1,2], ['3',4,1,2,3], ['1',1,2,3,4]]
+    print(cs)
+    # cs.sort(key=takeSecond, reverse=False)
+    cs.sort(key=lambda x:(x[3]), reverse=False)
+    print(cs)
+    
+    '''
+    cs = {'4':[[1],[2],[3]], '2':[[3],[4],[1]], '3':[[4],[1],[2]], '1':[[2],[3],[4]]}
+    print(cs)
+    # cs.sort(key=takeSecond, reverse=False)
+    # sorted(cs, key=lambda x: (x['3']), reverse=False)
+    sorted(cs.items(), key=lambda x: x[1][1], reverse=False)
+    print(cs)
+
+
+
+
 
 
 

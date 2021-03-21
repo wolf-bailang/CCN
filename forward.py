@@ -31,7 +31,7 @@ class FORWARD():
         # Infaces = pit_entry[0]
         return Infaces
 
-    def Forward_interest(self, network, route_ID, interest):
+    def Forward_interest(self, fib, network, route_ID, interest):
         '''
         interest = {'type': 'interest', 'interest_ID': 0, 'consumer_ID': 0, 'route_ID': 0, 'content_name': 'r0/0',
                             'interest_hop': 0, 'life_hop': 5, 'start_time': 0.0}
@@ -44,27 +44,16 @@ class FORWARD():
         Outfaces = []
         inface = interest['route_ID']
         # Get the fibs record table of this router
-        Network = NETWORK()
+        # Network = NETWORK()
         network = network # Network.Get_network()
-        FIB_entry = network['r'+str(route_ID)]
+        fib_entry = network['r'+str(route_ID)]
         # print('FIB_entry')
         # print(FIB_entry)
-        '''
-        # Get the requested content name of the interest packet
-        # content_name = interest['content_name']
-        # Get the fib record table of this router
+        ################################################
         # Fib = FIB()
-        # FIB_entry = Fib.Get_FIB_entry(content_name)
-        # Check whether there is a record of an entry with the same name as the interest packet in the fib
-        for i in range(len(fib)):
-            fib_entry = fib[i]
-            # print(pit_entry[0])
-            if content_name == fib_entry[0]:
-                Outface = fib_entry[2]
-                # print(Outface)
-                return Outface
-        '''
-        for x in FIB_entry:
+        # fib_entry = Fib.Search_fib_interest(fib, route_ID, interest)
+        ################################################
+        for x in fib_entry:
             if x != inface or x != route_ID:
                 Outfaces.append(x)
         return Outfaces
