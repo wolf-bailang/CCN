@@ -86,8 +86,8 @@ class DATA():
         Forward = FORWARD()
         network, ps, cs, pit, fib = tables
         _, cache_size, fib_size = sizes
-        #print(data)
-        #print('')
+        print(data)
+        print('')
         consumer_ID = data['consumer_ID']
         # Check whether there is an entry matching the content name of the data packet in the pit
         PIT_search_ACK = Pit.Search_pit_data(pit, data)
@@ -139,7 +139,7 @@ class DATA():
                                   "Path", "Result", "Hit_consumer", "Hit_PIT", "Miss"])
         '''
         # data是前面运行出的数据，先将其转为字符串才能写入
-        data2str = [str(times-data['run_start_time']), data['type'], data['consumer_ID'],  data['route_ID'],
+        data2str = [str(times-data['run_start_time']), data['type'], 'C'+str(data['consumer_ID']),  'R'+str(data['route_ID']),
                     data['content_name'], data['data_hop'], data['path'], result, hit_consumer, hit_PIT, miss_PIT]
         data_csv_writer.writerow(data2str)
         # f.close()

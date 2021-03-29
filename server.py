@@ -12,68 +12,78 @@ from cs import CS
 from pit import PIT
 from fib import FIB
 from network import NETWORK
-import Table
-
-#FIB
-network = [['r0', ['r1', 'r2']], ['r1', ['r0', 'r3']], ['r2', ['r0', 'r3']], ['r3', ['r1', 'r2']]]
 
 class Server(threading.Thread):
-
     def __init__(self, serverID, sizes, producer_contents, HOST='127.0.0.1'):
         threading.Thread.__init__(self)
         self.HOST = HOST
         self.PORT= 8000 + serverID
-        self.id = serverID  # 'r' + str(serverID)
-        self.sizes = sizes
+        self.id = serverID
+        self.sizes = sizes      # sizes = [queue_size, cache_size, fib_size]
         self.queue_size, _, _ = sizes
         self.interest_queue = queue.Queue(self.queue_size)
         self.data_queue = queue.Queue(self.queue_size)
 
+        self.uptime = int(time.time())
+        self.step = 0
+
+        # Create class instance
         Network = NETWORK()
-        pit = PIT()
-        ps = PS()
-        cs = CS()
-        fib = FIB()
+        Pit = PIT()
+        Ps = PS()
+        Cs = CS()
+        Fib = FIB()
+        # Create a network link table
         self.network = Network.Creat_network()
-        self.pit = pit.Creat_pit(route_ID=self.id)
-        producer_content = producer_contents['r'+str(self.id)]
-        self.ps = ps.Creat_ps(route_ID=self.id, route_num=12, content_num=100, producer_content=producer_content)
+        # Create pit table
+        self.pit = Pit.Creat_pit(route_ID=self.id)
+        #######################################################
+        # Get the producer contents of the current router
+        # producer_content = producer_contents['r'+str(self.id)]
+        # Create a producer content store table
+        # self.ps = Ps.Creat_ps(route_ID=self.id, route_num=12, content_num=100, producer_content=producer_content)
+        #######################################################
+        # Create a producer content store table
         self.ps = producer_contents['r'+str(self.id)]
-        self.cs = cs.Creat_cs(route_ID=self.id)
-        self.fib = fib.Creat_FIB(route_ID=self.id)
+        # Create router CS table
+        self.cs = Cs.Creat_cs(route_ID=self.id)
+        # Create router FIB table
+        self.fib = Fib.Creat_FIB(route_ID=self.id)
         self.Tables = [self.network, self.ps, self.cs, self.pit, self.fib]
 
     def run(self):
         threading.Thread(target = self.accept, daemon=True).start()
         threading.Thread(target = self.interest_process, daemon=True).start()
         threading.Thread(target = self.data_process, daemon=True).start()
-        
-    def start_network(self, run_start_time, frequency, content_num, route_num, interests):
+
+    # Every second, each router sends a specified number of new interest packets to the network
+    def start_network(self, run_start_time, frequency, content_num, route_num, interests):# , step, uptime
+        start_packets = []
+
         Interest = INTEREST()
-        for i in range(int(10)):
-            interest = interests['r' + str(self.id)]
+        # times = int(time.time()) - run_start_time
+        interest = interests['r' + str(self.id)]
+
+        # uptime = int(time.time())
+        # step = 0
+        print('1111111111111111111111111111111111')
+        print(int(time.time()) - int(run_start_time))
+        # print(int(time.time()) - uptime)
+        # print('self.step= '+str(self.step))
+        # while True:
+        if int(time.time()) - self.uptime > 2:
+            self.uptime = int(time.time())
+            print('self.step= ' + str(self.step))
+        # for i in range(1, len(interest)):
             start_packets = Interest.Generate_interest(route_ID=self.id, run_start_time=run_start_time, frequency=frequency, content_num=content_num,
-                                                       route_num=route_num, interest=interest)
-            # start_packets = interests['r'+str(self.id)]
-            # print('start_packets')
-            # print(start_packets)
-            for i in start_packets:
-                self.interest_queue.put(i)
-            time.sleep(1)
-        '''
-        start = time.time()
-        while int(time.time() - start) == 2:
-            # time.time()
-        '''
-    '''
-    def Init(self, route_num, content_num):
-        ps = PS()
-        ps.Creat_ps(route_ID=self.id, route_num=route_num, content_num=content_num)
-        pit = PIT()
-        pit.Creat_pit(route_ID=self.id)
-        fib = FIB()
-        fib.Creat_FIB(route_ID=self.id)
-    '''
+                                                   route_num=route_num, interest=interest[frequency*self.step : frequency*self.step+frequency])
+            self.step += 1
+            print('start_packets')
+            print(start_packets)
+            for i in range(1, len(start_packets)):
+                self.interest_queue.put(start_packets[i])
+                # break
+        # time.sleep(1)
 
     def accept(self):
         server = socket.socket(socket.AF_INET, socket.SOCK_STREAM)

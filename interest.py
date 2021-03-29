@@ -66,6 +66,7 @@ class INTEREST():
         return Interests
         '''
         Interests = []
+        Interests.append({'start':'start'})
         for i in range(0, len(interest)):
             interest_temp = {'type': "interest", 'interest_ID': '', 'consumer_ID': 0, 'route_ID': 0, 'content_name': '',
                              'interest_hop': 0, 'life_hop': 0, 'run_start_time': 0, 'path': ''}
@@ -135,8 +136,8 @@ class INTEREST():
         # pit = Pit.Get_pit()
         #print('r' + str(route_ID) + ' pit')
         #print(pit)
-        #print(interest)
-        #print('')
+        print(interest)
+        print('')
 
         content_name = interest['content_name']
         # Find the data of the content name in ps
@@ -204,8 +205,8 @@ class INTEREST():
                                       "Interest_hop", "Path", "Result", "Hit", "Miss"])
         '''
         # interest是前面运行出的数据，先将其转为字符串才能写入
-        interest2str = [str(times-interest['run_start_time']), interest['type'], interest['interest_ID'],
-                        interest['consumer_ID'], interest['route_ID'], interest['content_name'],
+        interest2str = [str(times-interest['run_start_time']), interest['type'], 'I'+str(interest['interest_ID']),
+                        'C'+str(interest['consumer_ID']), 'R'+str(interest['route_ID']), interest['content_name'],
                         interest['interest_hop'], interest['path'], result, hit, miss]
         interest_csv_writer.writerow(interest2str)
         # interest_f.close()
