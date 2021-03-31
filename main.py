@@ -40,10 +40,10 @@ def main():
     peremiters = load_peremiters()
 
     server_num = peremiters['route_num']
-    frequency = peremiters['frequency']  # 10/s
+    frequency = 1 # peremiters['frequency']  # 10/s
     route_num = peremiters['route_num']
     content_num = peremiters['content_num']
-    run_time = 30 #peremiters['run_time']
+    run_time = 100 #peremiters['run_time']
     queue_size = peremiters['queue_size']
     cache_size = peremiters['cache_size']
     fib_size = peremiters['fib_size']
@@ -54,18 +54,19 @@ def main():
     run_start_time = int(time.time())
     # network = Network(server_num)
     # networks = network.Network_init()
+    # uptime = run_start_time
+    # step = 0
     server_list = []
     for i in range(server_num):
-        server = Server(i, sizes, producer_contents)
+        server = Server(i, sizes, producer_contents, run_start_time)
         server.start()
         server_list.append(server)
-    #uptime = int(time.time())
-    #step = 0
 
+    '''
     for i in server_list:
         # The router sends new interest packets to the network
-        i.start_network(run_start_time, frequency, content_num, route_num, interests)#, step=0, uptime=uptime
-    '''
+        i.start_network(run_start_time, frequency, content_num, route_num, interests)  #, step=step, uptime=uptime
+    
     uptime= int(time.time())
     step = 0
     while True:
@@ -89,6 +90,9 @@ def main():
     '''
 
     while True:
+        for i in server_list:
+            # The router sends new interest packets to the network
+            i.start_network(run_start_time, frequency, content_num, route_num, interests)  # , step=step, uptime=uptime
         # Whether it's the end time of the simulator
         if int(time.time()) - int(run_start_time) > int(run_time):
             print(str(time.time()))

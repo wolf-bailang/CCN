@@ -25,9 +25,9 @@ data = {'type': 'data',
         'data_hop': 0,
         'start_time': 0.0
        }
-'''
 
-data_f = open('./Output/Output_data.csv', 'w', encoding='utf-8', newline="")
+'''
+data_f = open('./Output/Output_data.csv', 'a+', encoding='utf-8', newline="")
 data_csv_writer = csv.writer(data_f)
 data_csv_writer.writerow(["Time", "Type", "Consumer_ID", "Route_ID", "Content_name", "Data_hop",
                           "Path", "Result", "Hit_consumer", "Hit_PIT", "Hit_Miss"])
@@ -86,8 +86,8 @@ class DATA():
         Forward = FORWARD()
         network, ps, cs, pit, fib = tables
         _, cache_size, fib_size = sizes
-        print(data)
-        print('')
+        #print(data)
+        #print('')
         consumer_ID = data['consumer_ID']
         # Check whether there is an entry matching the content name of the data packet in the pit
         PIT_search_ACK = Pit.Search_pit_data(pit, data)
@@ -107,7 +107,7 @@ class DATA():
                 #print(Datas)
                 return Datas
             else:
-                # print('YES consumer')
+                #print('YES consumer')
                 times = int(time.time())
                 self.Output_data_txt(data, times=times, result='Data hit in consumer', hit_consumer=1, hit_PIT=0, miss_PIT=0)
                 packet = []
@@ -133,16 +133,17 @@ class DATA():
         data = {'type': 'data', 'consumer_ID': 0, 'route_ID': 0, 'content_name': 'r0/0', 'content_data': '',
                 'data_hop': 0, 'run_start_time': 0, 'data_start_time': 0, 'data_hop_time': 0, 'path': ''}
 
-        data_f = open('Output_data.csv', 'a+', encoding='utf-8', newline="")
+        data_f = open('./Output/Output_data.csv', 'a+', encoding='utf-8', newline="")
         data_csv_writer = csv.writer(data_f)
-        data_csv_writer.writerow(["Time", "Type", "consumer_ID", "Route_ID", "Content_name", "Data_hop",
-                                  "Path", "Result", "Hit_consumer", "Hit_PIT", "Miss"])
+        data_csv_writer.writerow(["Time", "Type", "Consumer_ID", "Route_ID", "Content_name", "Data_hop",
+                                  "Path", "Result", "Hit_consumer", "Hit_PIT", "Hit_Miss"])
         '''
         # data是前面运行出的数据，先将其转为字符串才能写入
+        #print('1111111111111111111111111111111111111111111111')
         data2str = [str(times-data['run_start_time']), data['type'], 'C'+str(data['consumer_ID']),  'R'+str(data['route_ID']),
                     data['content_name'], data['data_hop'], data['path'], result, hit_consumer, hit_PIT, miss_PIT]
         data_csv_writer.writerow(data2str)
-        # f.close()
+        #data_f.close()
 
 if __name__ == '__main__':
     # Create_data(inface, route_ID= 'r0', interest = ['i0', 'c0', 'r0', 'r1/1', 10., 100.])

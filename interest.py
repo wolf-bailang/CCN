@@ -26,12 +26,14 @@ interest = {'type': 'interest',
             'life_hop': 0,
             'start_time': 0.0
            }
-'''
 
-interest_f = open('./Output/Output_interest.csv', 'w', encoding='utf-8', newline="")
+'''
+interest_f = open('./Output/Output_interest.csv', 'a+', encoding='utf-8', newline="")
 interest_csv_writer = csv.writer(interest_f)
 interest_csv_writer.writerow(["Time", "Type", "Interest_ID", "Consumer_ID", "Route_ID", "Content_name",
                               "Interest_hop", "Path", "Result", "Hit", "Miss"])
+
+
 
 class INTEREST():
     def __init__(self):
@@ -136,8 +138,8 @@ class INTEREST():
         # pit = Pit.Get_pit()
         #print('r' + str(route_ID) + ' pit')
         #print(pit)
-        print(interest)
-        print('')
+        # print(interest)
+        # print('')
 
         content_name = interest['content_name']
         # Find the data of the content name in ps
@@ -150,7 +152,7 @@ class INTEREST():
             # Infaces = Forward.Forward_data(data)
             Datas = Data.Send_data(inface, route_ID, data)
             self.Output_interest_txt(interest, times=int(time.time()), result='Hit in PS', hit=1, miss=0)
-            # print('interest hit in PS')
+            #print('interest hit in PS')
             # print(Datas)
             return Datas
         # interest miss in PS
@@ -199,7 +201,7 @@ class INTEREST():
         interest = {'type': "interest", 'interest_ID': '', 'consumer_ID': 0, 'route_ID': 0, 'content_name': '',
                     'interest_hop': 0, 'life_hop': 0, 'run_start_time': 0, 'path': ''}
 
-        interest_f = open('Output_interest.csv', 'a+', encoding='utf-8', newline="")
+        interest_f = open('./Output/Output_interest.csv', 'a+', encoding='utf-8', newline="")
         interest_csv_writer = csv.writer(interest_f)
         interest_csv_writer.writerow(["Time", "Type", "Interest_ID", "Consumer_ID", "Route_ID", "Content_name",
                                       "Interest_hop", "Path", "Result", "Hit", "Miss"])
@@ -209,7 +211,7 @@ class INTEREST():
                         'C'+str(interest['consumer_ID']), 'R'+str(interest['route_ID']), interest['content_name'],
                         interest['interest_hop'], interest['path'], result, hit, miss]
         interest_csv_writer.writerow(interest2str)
-        # interest_f.close()
+        #interest_f.close()
 
     def Drop_interest(self, route_ID, interest):
         print('Drop_interest')

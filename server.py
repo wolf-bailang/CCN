@@ -13,8 +13,11 @@ from pit import PIT
 from fib import FIB
 from network import NETWORK
 
+#uptime = int(run_start_time)
+#step = 0
+
 class Server(threading.Thread):
-    def __init__(self, serverID, sizes, producer_contents, HOST='127.0.0.1'):
+    def __init__(self, serverID, sizes, producer_contents, run_start_time, HOST='127.0.0.1'):
         threading.Thread.__init__(self)
         self.HOST = HOST
         self.PORT= 8000 + serverID
@@ -24,7 +27,7 @@ class Server(threading.Thread):
         self.interest_queue = queue.Queue(self.queue_size)
         self.data_queue = queue.Queue(self.queue_size)
 
-        self.uptime = int(time.time())
+        self.uptime = run_start_time
         self.step = 0
 
         # Create class instance
@@ -57,7 +60,7 @@ class Server(threading.Thread):
         threading.Thread(target = self.data_process, daemon=True).start()
 
     # Every second, each router sends a specified number of new interest packets to the network
-    def start_network(self, run_start_time, frequency, content_num, route_num, interests):# , step, uptime
+    def start_network(self, run_start_time, frequency, content_num, route_num, interests):#, step, uptime
         start_packets = []
 
         Interest = INTEREST()
@@ -66,23 +69,23 @@ class Server(threading.Thread):
 
         # uptime = int(time.time())
         # step = 0
-        print('1111111111111111111111111111111111')
+        #print('1111111111111111111111111111111111')
         print(int(time.time()) - int(run_start_time))
-        # print(int(time.time()) - uptime)
+        #print(int(time.time()) - self.uptime)
         # print('self.step= '+str(self.step))
-        # while True:
-        if int(time.time()) - self.uptime > 2:
-            self.uptime = int(time.time())
-            print('self.step= ' + str(self.step))
-        # for i in range(1, len(interest)):
-            start_packets = Interest.Generate_interest(route_ID=self.id, run_start_time=run_start_time, frequency=frequency, content_num=content_num,
-                                                   route_num=route_num, interest=interest[frequency*self.step : frequency*self.step+frequency])
-            self.step += 1
-            print('start_packets')
-            print(start_packets)
-            for i in range(1, len(start_packets)):
-                self.interest_queue.put(start_packets[i])
-                # break
+        while True:
+            if int(time.time()) - self.uptime > 2:
+                self.uptime = int(time.time())
+                print('self.step= ' + str(self.step))
+                # for i in range(1, len(interest)):
+                start_packets = Interest.Generate_interest(route_ID=self.id, run_start_time=run_start_time, frequency=frequency, content_num=content_num,
+                                                       route_num=route_num, interest=interest[frequency*self.step : frequency*self.step+frequency])
+                self.step += 1
+                print('start_packets')
+                print(start_packets)
+                for i in range(1, len(start_packets)):
+                    self.interest_queue.put(start_packets[i])
+                break
         # time.sleep(1)
 
     def accept(self):
