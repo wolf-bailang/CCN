@@ -1,10 +1,10 @@
 # Content-Centric Networking（CCN）
 
 # Format definition  
->Route_ID = 0 1 ... 11 
-Consumer_ID =  0 1 ... 11 
-Interest_ID =  00000 00001 10000... 110000 
-Content_name = 'route_ID/0-99'.  example: 'r0/0'
+>Route_ID = 0 1 ... 11   
+Consumer_ID =  0 1 ... 11   
+Interest_ID =  00000 00001 10000... 110000   
+Content_name = 'route_ID/0-99'.  example: 'r0/0'  
 
 # Global
 **Network router link**  
@@ -14,11 +14,11 @@ Content_name = 'route_ID/0-99'.  example: 'r0/0'
 >producer_contents = {'r'+'route_ID': [content_name, ...], ... }
 
 **Interest packets sent by consumer**  
->[{'type': 'interest', 'interest_ID': '00000', 'consumer_ID': 0, 'route_ID': 0, 'content_name': 'r4/1', 'interest_hop': 0, 'life_hop': 5, 'start_time': 1615357629, 'path': '0'}, 
-{'type': 'interest', 'interest_ID': '00001', 'consumer_ID': 0, 'route_ID': 0, 'content_name': 'r7/7', 'interest_hop': 0, 'life_hop': 5, 'start_time': 1615357629, 'path': '0'}, 
-{'type': 'interest', 'interest_ID': '00002', 'consumer_ID': 0, 'route_ID': 0, 'content_name': 'r5/9', 'interest_hop': 0, 'life_hop': 5, 'start_time': 1615357629, 'path': '0'}, 
-{'type': 'interest', 'interest_ID': '00003', 'consumer_ID': 0, 'route_ID': 0, 'content_name': 'r10/2', 'interest_hop': 0, 'life_hop': 5, 'start_time': 1615357629, 'path': '0'}, 
-{'type': 'interest', 'interest_ID': '00004', 'consumer_ID': 0, 'route_ID': 0, 'content_name': 'r7/8', 'interest_hop': 0, 'life_hop': 5, 'start_time': 1615357629, 'path': '0'}]
+>[{'type': 'interest', 'interest_ID': '00000', 'consumer_ID': 0, 'route_ID': 0, 'content_name': 'r4/1', 'interest_hop': 0, 'life_hop': 5, 'start_time': 1615357629, 'path': '0'},   
+{'type': 'interest', 'interest_ID': '00001', 'consumer_ID': 0, 'route_ID': 0, 'content_name': 'r7/7', 'interest_hop': 0, 'life_hop': 5, 'start_time': 1615357629, 'path': '0'},   
+{'type': 'interest', 'interest_ID': '00002', 'consumer_ID': 0, 'route_ID': 0, 'content_name': 'r5/9', 'interest_hop': 0, 'life_hop': 5, 'start_time': 1615357629, 'path': '0'},   
+{'type': 'interest', 'interest_ID': '00003', 'consumer_ID': 0, 'route_ID': 0, 'content_name': 'r10/2', 'interest_hop': 0, 'life_hop': 5, 'start_time': 1615357629, 'path': '0'},   
+{'type': 'interest', 'interest_ID': '00004', 'consumer_ID': 0, 'route_ID': 0, 'content_name': 'r7/8', 'interest_hop': 0, 'life_hop': 5, 'start_time': 1615357629, 'path': '0'}]  
 
 **Interest packets received by router**  
 >interest = {'type': 'interest', 'interest_ID': 0, 'consumer_ID': 0, 'route_ID': 0, 'content_name': 'r0/0',
@@ -46,16 +46,50 @@ Content_name = 'route_ID/0-99'.  example: 'r0/0'
 **for each router**  
 >
 
-# peremiters
-json
-{
-      "route_num": 12, 
-      "frequency": 2, 
-      "content_num": 100, 
-      "run_time": 100, 
-      "queue_size": 100, 
-      "cache_size": 100, 
-      "FIB_size": 10
+# Input 
+**networks**  
+json  
+{  
+       ''r0'':[1, 3],   
+       ''r1'': [0, 2, 3],   
+       ''r2'': [1, 4],   
+       ...  
+       ''r11'': [7, 10]  
+}
+
+**peremiters**  
+json  
+{  
+      "route_num": 12,   
+      "frequency": 2,   
+      "content_num": 100,   
+      "run_time": 100,   
+      "queue_size": 100,   
+      "cache_size": 100,   
+      "FIB_size": 10  
+}
+
+**producer_contents**  
+    12*100=1200  
+json  
+{  
+      "r0": ["r0/0", "r0/1", "r0/2", ..., "r0/98", "r0/99"],   
+      "r1": ["r1/0", "r1/1", "r1/2", ..., "r1/98", "r1/99"],    
+      "r2": ["r2/0", "r2/1", "r2/2", ..., "r2/98", "r2/99"],   
+      ...  
+      "r11": ["r11/0", "r11/1", "r11/2", ..., "r11/98", "r11/99"]  
+}
+
+**interests**  
+5/s*12=60/s        
+12*100=1200  
+json  
+{  
+      "r0": [{'interest': 00000,'content_name':'r1/3'}, ...],   
+      "r1": [{'interest': 10000,'content_name':'r9/2'}, ...],   
+      "r2": [{'interest': 20000,'content_name':'r11/8'}, ...],   
+      ...  
+      "r11": [{'interest': 110000,'content_name':'r6/7'}, ...]  
 }
  
       
