@@ -7,10 +7,6 @@ from __future__ import print_function
 
 import time
 
-'''
-# cs = {'route_ID': [content_name 0-100]}
-cs = {}
-'''
 
 class CS():
     def __init__(self):
@@ -18,25 +14,25 @@ class CS():
         # self.content_num = content_num
         self.cs = []
 
-    # Producer generates unique content name
+    # Each router creates an independent cache space
     def Creat_cs(self, route_ID):
         '''
-        cs=[[content_name, data, time, cost],
-            ...
-           ]
+        cs = [[content_name, data, time, cost],
+              ...
+             ]
         '''
         return self.cs
 
+    # Get cs
     def Get_cs(self):
         return self.cs
 
+    # Check if there is data matching the content name in cs
     def Search_cs_interest(self, cs, content_name):
         '''
-        cs=[[content_name, data, time, cost],...]
-        interest = {'type': 'interest', 'interest_ID': 0, 'consumer_ID': 0, 'route_ID': 0, 'content_name': 'r0/0',
-                    'interest_hop': 0, 'life_hop': 5, 'start_time': 0.0}
+        cs = [[content_name, data, time, cost],...]
+        cs_entry = [content_name, data, time, cost]
         '''
-        # Check if there is data matching the content name in cs
         self.cs = cs
         for i in range(len(self.cs)):
             cs_entry = self.cs[i]
@@ -45,34 +41,42 @@ class CS():
         # No data for content name found in cs
         return False
 
+    # Add an entry to CS
     def Creat_cs_entry(self, data):
+        '''
+        cs = [[content_name, data, time, cost],...]
+        data = {'type': 'data', 'consumer_ID': 0, 'route_ID': 0, 'content_name': 'r0/0', 'content_data': '',
+                'data_hop': 0, 'run_start_time': 0.0, 'path': ''}
+        '''
         content_name = data['content_name']
         content_data = data['content_data']
+        # Record the time this entry was created
         times = int(time.time())
         cost = data['data_hop']
         cs_entry = [content_name, content_data, times, cost]
         return cs_entry
 
+    # Delete an entry from CS
     def Remove_cs_entry(self, cs):
+        '''
+        cs = [[content_name, data, time, cost],...]
+        '''
         self.cs = cs
+        # sort cost-based
         self.cs.sort(key=lambda x:(x[-1]), reverse=False)
         index = -1
+        # Delete the most costly entry
         del self.cs[index]
 
+    # Cache data
     def Cache_cs_data(self, cs, cache_size, data):
         self.cs = cs
+        # Check if CS is full
         if self.cs < cache_size:
             cs_entry = self.Creat_cs_entry(data)
             self.cs.append(cs_entry)
         else:
+            # Remove the most costly entry
             self.Remove_cs_entry(self.cs)
             cs_entry = self.Creat_cs_entry(data)
             self.cs.append(cs_entry)
-
-
-if __name__ == '__main__':
-    CS = {'r0': ['r0/0', 'r0/1', 'r1/1'], 'r1': ['r2/0', 'r2/1', 'r2/1']}
-    interest = {'r0': ['i0', 'c0', 'r0', 'r1/1', 10., 100.]}
-    inface = 'r0'
-    # CS_search_interest(inface, interest)
-    # print('CS')

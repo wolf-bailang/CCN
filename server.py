@@ -5,29 +5,26 @@ import time
 import socket
 import json
 
+from network import NETWORK
 from interest import INTEREST
 from data import DATA
 from ps import PS
 from cs import CS
 from pit import PIT
 from fib import FIB
-from network import NETWORK
 
-#uptime = int(run_start_time)
-#step = 0
 
 class Server(threading.Thread):
-    def __init__(self, serverID, sizes, producer_contents, run_start_time, HOST='127.0.0.1'):
+    def __init__(self, serverID, sizes, producer_contents, run_start_time, network, HOST='127.0.0.1'):
         threading.Thread.__init__(self)
         self.HOST = HOST
         self.PORT= 8000 + serverID
-        self.id = serverID
+        self.id = serverID      # number
         self.sizes = sizes      # sizes = [queue_size, cache_size, fib_size]
         self.queue_size, _, _ = sizes
-        self.interest_queue = queue.Queue(self.queue_size)
-        self.data_queue = queue.Queue(self.queue_size)
-
-        self.uptime = run_start_time
+        self.interest_queue = queue.Queue(self.queue_size)      # queue.Queue()
+        self.data_queue = queue.Queue(self.queue_size)          # queue.Queue()
+        self.Last_time = run_start_time
         self.step = 0
 
         # Create class instance
@@ -37,7 +34,7 @@ class Server(threading.Thread):
         Cs = CS()
         Fib = FIB()
         # Create a network link table
-        self.network = Network.Creat_network()
+        self.network = Network.Creat_network(network)
         # Create pit table
         self.pit = Pit.Creat_pit(route_ID=self.id)
         #######################################################
@@ -54,40 +51,37 @@ class Server(threading.Thread):
         self.fib = Fib.Creat_FIB(route_ID=self.id)
         self.Tables = [self.network, self.ps, self.cs, self.pit, self.fib]
 
+    # Create thread
     def run(self):
         threading.Thread(target = self.accept, daemon=True).start()
         threading.Thread(target = self.interest_process, daemon=True).start()
         threading.Thread(target = self.data_process, daemon=True).start()
 
-    # Every second, each router sends a specified number of new interest packets to the network
-    def start_network(self, run_start_time, frequency, content_num, route_num, interests):#, step, uptime
+    # Each router sends a fixed number of new interest packets to the network every second
+    def start_network(self, run_start_time, frequency, content_num, route_num, interests):
         start_packets = []
-
         Interest = INTEREST()
-        # times = int(time.time()) - run_start_time
         interest = interests['r' + str(self.id)]
-
-        # uptime = int(time.time())
-        # step = 0
-        #print('1111111111111111111111111111111111')
         print(int(time.time()) - int(run_start_time))
-        #print(int(time.time()) - self.uptime)
-        # print('self.step= '+str(self.step))
         while True:
-            if int(time.time()) - self.uptime > 2:
-                self.uptime = int(time.time())
+            if int(time.time()) - self.Last_time > frequency:
+                self.Last_time = int(time.time())
                 print('self.step= ' + str(self.step))
-                # for i in range(1, len(interest)):
-                start_packets = Interest.Generate_interest(route_ID=self.id, run_start_time=run_start_time, frequency=frequency, content_num=content_num,
-                                                       route_num=route_num, interest=interest[frequency*self.step : frequency*self.step+frequency])
+                start_packets = Interest.Generate_interest(route_ID=self.id, run_start_time=run_start_time, frequency=frequency,
+                                                           content_num=content_num, route_num=route_num,
+                                                           interest=interest[frequency*self.step : frequency*self.step+frequency])
                 self.step += 1
-                print('start_packets')
-                print(start_packets)
-                for i in range(1, len(start_packets)):
-                    self.interest_queue.put(start_packets[i])
+                # print('start_packets')
+                # print(start_packets)
+                for i in range(0, len(start_packets)):
+                    if self.interest_queue.full():
+                        break
+                    else:
+                        self.interest_queue.put(start_packets[i])
                 break
         # time.sleep(1)
 
+    # Receive packet
     def accept(self):
         server = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         server.bind((self.HOST, self.PORT))
@@ -99,15 +93,18 @@ class Server(threading.Thread):
             packet = json.loads(packet)
             # packet = [interest] or [data]
             if packet['type'] == 'interest':         # Interest packet received
-                # self.interest_queue.put(packet)
                 Interest = INTEREST()
-                if Interest.Time_out(packet) == True:
+                if Interest.Time_out(packet) == True or self.interest_queue.full() == False:
                     self.interest_queue.put(packet)
                 else:
                     pass
-            elif packet['type'] == 'data':           # Data packet received
-                self.data_queue.put(packet)
+            elif packet['type'] == 'data':           # Data packet received'
+                if self.data_queue.full() == False:
+                    self.data_queue.put(packet)
+                else:
+                    pass
 
+    # process interest
     def interest_process(self):
         while self.interest_queue.empty is not True:
             interest = self.interest_queue.get()
@@ -130,17 +127,16 @@ class Server(threading.Thread):
                         send_interest.connect((self.HOST, 8000 + packet[i][0]))
                         # packet[i][1] = interest
                         send_interest.sendall(bytes(json.dumps(packet[i][1]), encoding='utf-8'))
-            else:  # Drop interest
-                pass
-            #else:
-            #    pass
+            else:
+                pass    # Drop interest
 
+    # process data
     def data_process(self):
         while self.data_queue.empty is not True:
             data = self.data_queue.get()
             Data = DATA()
             packet = Data.On_data(sizes=self.sizes, route_ID=self.id, data=data, tables=self.Tables)
-            if len(packet) :
+            if len(packet):
                 if packet[0][1]['type'] == 'data':     # send Datas packet
                     for i in range(len(packet)):
                         time.sleep(1)
@@ -149,5 +145,5 @@ class Server(threading.Thread):
                         send_data.connect((self.HOST, 8000 + packet[i][0]))
                         # packet[i][1] = data
                         send_data.sendall(bytes(json.dumps(packet[i][1]), encoding='utf-8'))
-            else:   # Drop data
-                pass
+            else:
+                pass    # Drop data

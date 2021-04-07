@@ -68,7 +68,7 @@ if __name__ == '__main__':
         producer_contents = json.load(fp)
         print(producer_contents)
     print(producer_contents)
-    '''
+    
 
 
     ps = {}
@@ -94,9 +94,21 @@ if __name__ == '__main__':
         interests = json.load(fp)
         print(interests)
     print(interests)
+    '''
 
+    network = {}
+    b = {"r0": [1, 3], "r1": [0, 2, 3], "r2": [1, 4], "r3": [0, 1, 5], "r4": [2, 5, 6], "r5": [3, 4, 5],
+         "r6": [4, 7], "r7": [6, 8, 11], "r8": [5, 7, 9], "r9": [8, 10], "r10": [9, 11], "r11": [7, 10]}
+    network.update(b)
+    print(network)
+    with open("./Input/network.json", "w", encoding='utf-8') as f:
+        # temp = json.dumps(ps)
+        json.dump(network, f)  # 写为一行
 
-
-
-
+    with open('./Input/network.json', 'r', encoding='utf8')as fp:
+        networks = json.load(fp)
+        #for key, value in networks.items():
+        #    networks[key] = list(value)
+        print(networks)
+    print(networks['r0'])
 

@@ -6,42 +6,30 @@
 from __future__ import print_function
 
 import time
-import matplotlib.pyplot as plt
 import csv
 
-import Table
 from cs import CS
 from pit import PIT
 from fib import FIB
 from forward import FORWARD
 
-'''
-data = {'type': 'data',
-        # 'interest_ID': 0,
-        'consumer_ID': 0,
-        'route_ID': 0,
-        'content_name': 'r0/0',
-        'content_data': '',
-        'data_hop': 0,
-        'start_time': 0.0
-       }
-
-'''
-data_f = open('./Output/Output_data.csv', 'a+', encoding='utf-8', newline="")
+# Create a CSV file for recording the output information of the interest packet
+data_f = open('./Output/Output_data.csv', 'w+', encoding='utf-8', newline="")
 data_csv_writer = csv.writer(data_f)
-data_csv_writer.writerow(["Time", "Type", "Consumer_ID", "Route_ID", "Content_name", "Data_hop",
-                          "Path", "Result", "Hit_consumer", "Hit_PIT", "Hit_Miss"])
+data_csv_writer.writerow(["Time", "Type", "Consumer_ID", "Route_ID", "Content_name", "Data_hop", "Path", "Result",
+                          "Hit_consumer", "Hit_PIT", "Hit_Miss"])
 
 class DATA():
     def __init__(self):
         self.data = {}
 
+    # Create a data packet
     def Create_data(self, route_ID, interest):
         '''
         interest = {'type': 'interest', 'interest_ID': 0, 'consumer_ID': 0, 'route_ID': 0, 'content_name': 'r0/0',
-                     'interest_hop': 0, 'life_hop': 5, 'start_time': 0.0}
+                     'interest_hop': 0, 'life_hop': 5, 'run_start_time': 0.0, 'path': ''}
         data = {'type': 'data', 'consumer_ID': 0, 'route_ID': 0, 'content_name': 'r0/0', 'content_data': '',
-                'data_hop': 0, 'start_time': 0.0, 'path': ''}
+                'data_hop': 0, 'run_start_time': 0.0, 'path': ''}
         '''
         data = {'type': 'data', 'consumer_ID': 0, 'route_ID': 0, 'content_name': 'r0/0', 'content_data': '',
                 'data_hop': 0, 'run_start_time': 0, 'path': ''}
@@ -59,18 +47,19 @@ class DATA():
         self.data['path'] = 'p'
         return self.data
 
+    # Pack the data packet to be sent and the output interface
     def Send_data(self, Infaces, route_ID, data):
         '''
         data = {'type': 'data', 'consumer_ID': 0, 'route_ID': 0, 'content_name': 'r0/0', 'content_data': '',
-                'data_hop': 0, 'start_time': 0.0}
+                'data_hop': 0, 'run_start_time': 0.0, 'path': ''}
         '''
         Datas = []
+        # Hop count plus 1
         data['data_hop'] += 1
         data['route_ID'] = route_ID
+        # Record the transmission path
         data['path'] += str(route_ID)+'/'
-        # print(Infaces)
         for i in range(len(Infaces)):
-            # print(' i= ' + str(i))
             Datas.append([Infaces[i], data])
         return Datas
 
@@ -78,7 +67,7 @@ class DATA():
     def On_data(self, sizes, route_ID, data, tables):
         '''
         data = {'type': 'data', 'consumer_ID': 0, 'route_ID': 0, 'content_name': 'r0/0', 'content_data': '',
-                'data_hop': 0, 'start_time': 0.0}
+                'data_hop': 0, 'run_start_time': 0.0, 'path': ''}
         '''
         Cs = CS()
         Pit = PIT()
@@ -86,6 +75,7 @@ class DATA():
         Forward = FORWARD()
         network, ps, cs, pit, fib = tables
         _, cache_size, fib_size = sizes
+        #print('On_data')
         #print(data)
         #print('')
         consumer_ID = data['consumer_ID']
@@ -104,7 +94,6 @@ class DATA():
                 # print('data hit in PIT')
                 times = int(time.time())
                 self.Output_data_txt(data, times=times, result='Data hit in PIT', hit_consumer=0, hit_PIT=1, miss_PIT=0)
-                #print(Datas)
                 return Datas
             else:
                 #print('YES consumer')
@@ -114,8 +103,10 @@ class DATA():
                 return packet
         # data miss in PIT
         else:
-            # fib_data(inface, data)
-            # Pit.Remove_pit_entry(pit, data)
+            ############################################################
+            # Cs.Cache_cs_data(cs, cache_size, data)
+            # Fib.Update_fib_outface(fib, route_ID, fib_size, data)
+            ############################################################
             # print('data miss in PIT')
             times=int(time.time())
             self.Output_data_txt(data, times=times, result='Data miss in PIT', hit_consumer=0, hit_PIT=0, miss_PIT=1)
@@ -123,31 +114,21 @@ class DATA():
             packet = []
             return packet
 
-
     def Drop_data(self, inface, data):
         print('Drop_data')
 
-
+    # output information of the data packet
     def Output_data_txt(self, data, times, result, hit_consumer, hit_PIT, miss_PIT):
         '''
         data = {'type': 'data', 'consumer_ID': 0, 'route_ID': 0, 'content_name': 'r0/0', 'content_data': '',
-                'data_hop': 0, 'run_start_time': 0, 'data_start_time': 0, 'data_hop_time': 0, 'path': ''}
+                'data_hop': 0, 'run_start_time': 0.0, 'path': ''}
 
         data_f = open('./Output/Output_data.csv', 'a+', encoding='utf-8', newline="")
         data_csv_writer = csv.writer(data_f)
         data_csv_writer.writerow(["Time", "Type", "Consumer_ID", "Route_ID", "Content_name", "Data_hop",
                                   "Path", "Result", "Hit_consumer", "Hit_PIT", "Hit_Miss"])
         '''
-        # data是前面运行出的数据，先将其转为字符串才能写入
-        #print('1111111111111111111111111111111111111111111111')
         data2str = [str(times-data['run_start_time']), data['type'], 'C'+str(data['consumer_ID']),  'R'+str(data['route_ID']),
                     data['content_name'], data['data_hop'], data['path'], result, hit_consumer, hit_PIT, miss_PIT]
         data_csv_writer.writerow(data2str)
         #data_f.close()
-
-if __name__ == '__main__':
-    # Create_data(inface, route_ID= 'r0', interest = ['i0', 'c0', 'r0', 'r1/1', 10., 100.])
-    # On_data(inface= 'r0',route_ID= 'r0', data=  ['d','i0', 'c0', 'r0', 'r1/1', 10., 100., 1.])
-    print('data')
-
-

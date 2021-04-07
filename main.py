@@ -1,27 +1,32 @@
 
 import time
+import json
 
 from server import Server
-# from generate_data import *
-# from ps import PS
-# from network import NETWORK
-import json
+from network import NETWORK
+
+
+# Read network
+def load_network():
+    with open('./Input/network.json', 'r', encoding='utf8') as fp:
+        network = json.load(fp)
+    return network
 
 # Read parameters
 def load_peremiters():
-    with open('./Input/peremiters.json', 'r', encoding='utf8')as fp:
+    with open('./Input/peremiters.json', 'r', encoding='utf8') as fp:
         peremiters = json.load(fp)
     return peremiters
 
 # Read the contents produced by each producer
 def input_producer_contents():
-    with open('./Input/producer_contents.json', 'r', encoding='utf8')as fp:
+    with open('./Input/producer_contents.json', 'r', encoding='utf8') as fp:
         producer_contents = json.load(fp)
     return producer_contents
 
 # Read the interest packets to be sent by each router
 def input_interests():
-    with open('./Input/interests.json', 'r', encoding='utf8')as fp:
+    with open('./Input/interests.json', 'r', encoding='utf8') as fp:
         interests = json.load(fp)
     return interests
 
@@ -38,65 +43,35 @@ def main():
     producer_contents = input_producer_contents()
     interests = input_interests()
     peremiters = load_peremiters()
+    network = load_network()
 
     server_num = peremiters['route_num']
-    frequency = 1 # peremiters['frequency']  # 10/s
+    frequency = peremiters['frequency']  # 10/s
     route_num = peremiters['route_num']
     content_num = peremiters['content_num']
-    run_time = 100 #peremiters['run_time']
+    run_time = peremiters['run_time']
     queue_size = peremiters['queue_size']
     cache_size = peremiters['cache_size']
     fib_size = peremiters['fib_size']
     #
     sizes = [queue_size, cache_size, fib_size]
-    # server_num = route_num
     # Get the start time of the simulator
     run_start_time = int(time.time())
     # network = Network(server_num)
     # networks = network.Network_init()
-    # uptime = run_start_time
-    # step = 0
     server_list = []
     for i in range(server_num):
-        server = Server(i, sizes, producer_contents, run_start_time)
+        server = Server(i, sizes, producer_contents, run_start_time, network)
         server.start()
         server_list.append(server)
 
-    '''
-    for i in server_list:
+    while True:
         # The router sends new interest packets to the network
-        i.start_network(run_start_time, frequency, content_num, route_num, interests)  #, step=step, uptime=uptime
-    
-    uptime= int(time.time())
-    step = 0
-    while True:
-        print(int(time.time()) - int(run_start_time))
-        if int(time.time()) - uptime > 1:
-            uptime = int(time.time())
-            for i in server_list:
-                # The router sends new interest packets to the network
-                i.start_network(run_start_time, frequency, content_num, route_num, interests, step)
-            step +=1
-        # time.sleep(1)continue
-        # Whether it's the end time of the simulator / 2
-        if int(time.time()) - int(run_start_time) > int(run_time):
-            # print(str(int(time.time())))
-            # print(str(run_start_time))
-            print(str(int(time.time()) - int(run_start_time)))
-            print('end')
-            for i in server_list:
-                i.join()
-            break
-    '''
-
-    while True:
         for i in server_list:
-            # The router sends new interest packets to the network
-            i.start_network(run_start_time, frequency, content_num, route_num, interests)  # , step=step, uptime=uptime
-        # Whether it's the end time of the simulator
+            i.start_network(run_start_time, frequency, content_num, route_num, interests)
+        # Is the simulator running time up
         if int(time.time()) - int(run_start_time) > int(run_time):
-            print(str(time.time()))
-            print(str(run_start_time))
+            # Output simulator running time
             print(str(int(time.time()) - int(run_start_time)))
             print('end')
             for i in server_list:

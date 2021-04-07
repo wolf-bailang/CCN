@@ -3,16 +3,16 @@ from __future__ import print_function
 from pit import PIT
 from fib import FIB
 from network import NETWORK
-import Table
 
 class FORWARD():
     def __init__(self):
         self.forward = 0
 
+    # Get data packet forwarding interface
     def Forward_data(self, pit, data):
         '''
         data = {'type': 'data', 'consumer_ID': 0, 'route_ID': 0, 'content_name': 'r0/0', 'content_data': '',
-                'data_hop': 0, 'start_time': 0.0}
+                'data_hop': 0, 'run_start_time': 0.0, 'path': ''}
         pit = {'content_name': [[inface, ...], [outface, ...]], ...}
         '''
         Infaces = []
@@ -22,15 +22,12 @@ class FORWARD():
         # Get the pit_entry of this content_name
         Pit = PIT()
         pit_entry = pit[content_name]   # Pit.Get_pit_entry(content_name)
-        # print('pit_entry')
-        # print(pit_entry)
-        # print(pit_entry[0])
         for x in pit_entry[0]:
             if x != inface:
                 Infaces.append(x)
-        # Infaces = pit_entry[0]
         return Infaces
 
+    # Get interest packet forwarding interface
     def Forward_interest(self, fib, network, route_ID, interest):
         '''
         interest = {'type': 'interest', 'interest_ID': 0, 'consumer_ID': 0, 'route_ID': 0, 'content_name': 'r0/0',
@@ -45,10 +42,9 @@ class FORWARD():
         inface = interest['route_ID']
         # Get the fibs record table of this router
         # Network = NETWORK()
-        network = network # Network.Get_network()
+        network = network       # Network.Get_network()
         fib_entry = network['r'+str(route_ID)]
-        # print('FIB_entry')
-        # print(FIB_entry)
+
         ################################################
         # Fib = FIB()
         # fib_entry = Fib.Search_fib_interest(fib, route_ID, interest)
@@ -57,19 +53,3 @@ class FORWARD():
             if x != inface or x != route_ID:
                 Outfaces.append(x)
         return Outfaces
-
-
-
-if __name__ == '__main__':
-    '''
-    Table.PIT = {'r0': [['r1/0', ['r1', 'r3'], ['r4', 'r5']], ['r2/1', ['r2', 'r9'], ['r8', 'r7']]],
-                 'r1': [['r1/0', ['r1', 'r3'], ['r4', 'r5']], ['r1/11', ['r2', 'r9'], ['r8', 'r7']]]}
-    Table.Interest_table = {'r0': [['i0', 'c0', 'r1', 'r2/1', 10., 100.], ['i1', 'c0', 'r0', 'r1/1', 10., 100.]],
-                            'r1': [['i2', 'c0', 'r0', 'r3/1', 10., 100.], ['i3', 'c0', 'r0', 'r4/1', 10., 100.]]}
-    Table.PS = {'r0': ['r1/1', 'r3/0', 'r4/0', 'r5/0'],
-                'r1': ['r1/1', 'r2/1', 'r9/1', 'r8/1', 'r7/1']}
-    Table.FIB = {'r0': ['r5'],
-                 'r1': ['r2', 'r9', 'r8', 'r7']}
-    '''
-    # Forward_data(route_ID = 'r0', data = ['i0', 'c0', 'r0', 'r1/0', 10., 100., 2])
-    # Forward_interest(route_ID = 'r1', interest = ['i0', 'c0', 'r0', 'r1/0', 10., 100.])
