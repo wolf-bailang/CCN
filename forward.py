@@ -33,7 +33,7 @@ class FORWARD():
         interest = {'type': 'interest', 'interest_ID': 0, 'consumer_ID': 0, 'route_ID': 0, 'content_name': 'r0/0',
                             'interest_hop': 0, 'life_hop': 5, 'start_time': 0.0}
         # Not optimized
-        fib = network = {'route_ID':[route_ID, ...], ...}
+        fib = network = {'r'+'route_ID':[route_ID, ...], ...}
 
         # Can be optimized
         fib = [[content_name,[[cost, outface], ...]], ...]

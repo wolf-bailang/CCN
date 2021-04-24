@@ -52,6 +52,8 @@ class DATA():
         '''
         data = {'type': 'data', 'consumer_ID': 0, 'route_ID': 0, 'content_name': 'r0/0', 'content_data': '',
                 'data_hop': 0, 'run_start_time': 0.0, 'path': ''}
+        Infaces = [Inface, ...]
+        Datas = [[Inface, data], ...]
         '''
         Datas = []
         # Hop count plus 1
@@ -68,6 +70,8 @@ class DATA():
         '''
         data = {'type': 'data', 'consumer_ID': 0, 'route_ID': 0, 'content_name': 'r0/0', 'content_data': '',
                 'data_hop': 0, 'run_start_time': 0.0, 'path': ''}
+        sizes = [queue_size, cache_size, fib_size]
+        tables = [self.network, self.ps, self.cs, self.pit, self.fib]
         '''
         Cs = CS()
         Pit = PIT()

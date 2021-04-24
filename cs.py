@@ -45,6 +45,7 @@ class CS():
     def Creat_cs_entry(self, data):
         '''
         cs = [[content_name, data, time, cost],...]
+        cs_entry = [content_name, data, time, cost]
         data = {'type': 'data', 'consumer_ID': 0, 'route_ID': 0, 'content_name': 'r0/0', 'content_data': '',
                 'data_hop': 0, 'run_start_time': 0.0, 'path': ''}
         '''
@@ -62,7 +63,7 @@ class CS():
         cs = [[content_name, data, time, cost],...]
         '''
         self.cs = cs
-        # sort cost-based
+        # sort cost-based  x[-1] = cost
         self.cs.sort(key=lambda x:(x[-1]), reverse=False)
         index = -1
         # Delete the most costly entry
@@ -70,6 +71,11 @@ class CS():
 
     # Cache data
     def Cache_cs_data(self, cs, cache_size, data):
+        '''
+        cs = [[content_name, data, time, cost],...]
+        data = {'type': 'data', 'consumer_ID': 0, 'route_ID': 0, 'content_name': 'r0/0', 'content_data': '',
+                'data_hop': 0, 'run_start_time': 0.0, 'path': ''}
+        '''
         self.cs = cs
         # Check if CS is full
         if self.cs < cache_size:

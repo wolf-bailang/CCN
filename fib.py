@@ -24,6 +24,12 @@ class FIB():
         return self.fib_entry
 
     def Add_fib_outface(self, data):
+        '''
+        data = {'type': 'data', 'consumer_ID': 0, 'route_ID': 0, 'content_name': 'r0/0', 'content_data': '',
+                'data_hop': 0, 'run_start_time': 0.0, 'path': ''}
+        fib = {'content_name': [[outface, cost, time], ...], ... }
+        fib_entry = [[outface, cost, time], ...]
+        '''
         outface = data['route_ID']
         cost = data['data_hop']
         # Record the time when the outface was added
@@ -56,6 +62,12 @@ class FIB():
         del self.fib[content_name]
 
     def Add_fib_entry(self, data):
+        '''
+        data = {'type': 'data', 'consumer_ID': 0, 'route_ID': 0, 'content_name': 'r0/0', 'content_data': '',
+                'data_hop': 0, 'run_start_time': 0.0, 'path': ''}
+        fib = {'content_name': [[outface, cost, time], ...], ... }
+        fib_entry = [[outface, cost, time], ...]
+        '''
         content_name = data['content_name']
         outface = data['route_ID']
         cost = data['data_hop']
@@ -95,6 +107,11 @@ class FIB():
 
     # Find in FIB whether there is a matching interest packet entry
     def Search_fib_interest(self, fib, route_ID, interest):
+        '''
+        interest = {'type': 'interest', 'interest_ID': 0, 'consumer_ID': 0, 'route_ID': 0, 'content_name': 'r0/0',
+                    'interest_hop': 0, 'life_hop': 5, 'run_start_time': 0.0, 'path': ''}
+        fib = {'content_name': [[outface, cost, time], ...], ... }
+        '''
         self.fib = fib
         content_name = interest['content_name']
         self.fib_entry = self.Get_fib_entry(content_name)

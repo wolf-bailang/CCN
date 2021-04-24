@@ -8,17 +8,17 @@ Content_name = 'route_ID/0-99'.  example: 'r0/0'
 
 # Global
 **Network router link**  
->Network = {'r'+'route_ID': [route_ID, ...], ... }
+>Network = {'r'+str(route_ID): [route_ID, ...], ... }
 
 **1200 content names**  
->producer_contents = {'r'+'route_ID': [content_name, ...], ... }
+>producer_contents = {'r'+str(route_ID): [content_name, ...], ... }
 
 **Interest packets sent by consumer**  
->[{'type': 'interest', 'interest_ID': '00000', 'consumer_ID': 0, 'route_ID': 0, 'content_name': 'r4/1', 'interest_hop': 0, 'life_hop': 5, 'start_time': 1615357629, 'path': '0'},   
-{'type': 'interest', 'interest_ID': '00001', 'consumer_ID': 0, 'route_ID': 0, 'content_name': 'r7/7', 'interest_hop': 0, 'life_hop': 5, 'start_time': 1615357629, 'path': '0'},   
-{'type': 'interest', 'interest_ID': '00002', 'consumer_ID': 0, 'route_ID': 0, 'content_name': 'r5/9', 'interest_hop': 0, 'life_hop': 5, 'start_time': 1615357629, 'path': '0'},   
-{'type': 'interest', 'interest_ID': '00003', 'consumer_ID': 0, 'route_ID': 0, 'content_name': 'r10/2', 'interest_hop': 0, 'life_hop': 5, 'start_time': 1615357629, 'path': '0'},   
-{'type': 'interest', 'interest_ID': '00004', 'consumer_ID': 0, 'route_ID': 0, 'content_name': 'r7/8', 'interest_hop': 0, 'life_hop': 5, 'start_time': 1615357629, 'path': '0'}]  
+>[{'type': 'interest', 'interest_ID': '00000', 'consumer_ID': 0, 'route_ID': 0, 'content_name': 'r4/1', 'interest_hop': 0, 'life_hop': 5, 'run_start_time': 1615357629, 'path': '0'},   
+{'type': 'interest', 'interest_ID': '00001', 'consumer_ID': 0, 'route_ID': 0, 'content_name': 'r7/7', 'interest_hop': 0, 'life_hop': 5, 'run_start_time': 1615357629, 'path': '0'},   
+{'type': 'interest', 'interest_ID': '00002', 'consumer_ID': 0, 'route_ID': 0, 'content_name': 'r5/9', 'interest_hop': 0, 'life_hop': 5, 'run_start_time': 1615357629, 'path': '0'},   
+{'type': 'interest', 'interest_ID': '00003', 'consumer_ID': 0, 'route_ID': 0, 'content_name': 'r10/2', 'interest_hop': 0, 'life_hop': 5, 'run_start_time': 1615357629, 'path': '0'},   
+{'type': 'interest', 'interest_ID': '00004', 'consumer_ID': 0, 'route_ID': 0, 'content_name': 'r7/8', 'interest_hop': 0, 'life_hop': 5, 'run_start_time': 1615357629, 'path': '0'}]  
 
 **Interest packets received by router**  
 >interest = {'type': 'interest', 'interest_ID': 0, 'consumer_ID': 0, 'route_ID': 0, 'content_name': 'r0/0',
@@ -35,14 +35,16 @@ Content_name = 'route_ID/0-99'.  example: 'r0/0'
 >ps = [content_name, ...]  
 
 **Cache content information in the router's' CS**
->cs = [[content_name, data, time, cost], ... ]
+>cs = [[content_name, data, time, cost], ... ]  
+cs_entry = [content_name, data, time, cost]  
 
 **Information recorded in the router's PIT** 
 >pit = {'content_name': [[inface, ...], [outface, ...]], ... } 
 
 **Information recorded in the router's FIB**
->fib = {'content_name': [[outface, cost, time], ...], ... }
-      
+>fib = {'content_name': [[outface, cost, time], ...], ... }  
+fib_entry = [[outface, cost, time], ...]        
+
 **for each router**  
 >
 
@@ -92,7 +94,10 @@ json
       "r11": [{'interest': 110000,'content_name':'r6/7'}, ...]  
 }
  
-      
-
+# Output      
+interest = ["Time", "Type", "Interest_ID", "Consumer_ID", "Route_ID", "Content_name",
+            "Interest_hop", "Path", "Result", "Hit", "Miss"]  
+data = ["Time", "Type", "Consumer_ID", "Route_ID", "Content_name", "Data_hop",
+        "Path", "Result", "Hit_consumer", "Hit_PIT", "Hit_Miss"]
 
 

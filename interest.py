@@ -31,7 +31,8 @@ class INTEREST():
     # Consumer generated interest packet
     def Generate_interest(self, route_ID, run_start_time, frequency, content_num, route_num, interest):
         '''
-        interest = {'type': 'interest', 'interest_ID': 0, 'consumer_ID': 0, 'route_ID': 0, 'content_name': 'r0/0',
+        interest = {'interest_ID': 00000,'content_name':'r1/3'}
+        interest_temp = {'type': 'interest', 'interest_ID': 0, 'consumer_ID': 0, 'route_ID': 0, 'content_name': 'r0/0',
                      'interest_hop': 0, 'life_hop': 5, 'run_start_time': 0.0, 'path': ''}
         '''
         Interests = []

@@ -109,7 +109,7 @@ class Server(threading.Thread):
         while self.interest_queue.empty is not True:
             interest = self.interest_queue.get()
             Interest = INTEREST()
-            #if Interest.Time_out(interest_packet) == True:
+            # if Interest.Time_out(interest) == True:
             packet = Interest.On_interest(route_ID=self.id, interest=interest, tables=self.Tables)
             if len(packet) :
                 if packet[0][1]['type'] == 'data':  # send Datas packet
