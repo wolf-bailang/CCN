@@ -9,6 +9,7 @@ class Client:
     def start_client(self):
         clientMessage = 'Hello!'
         client = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        client.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
         client.connect((self.HOST, self.PORT))
         
         client.sendall(clientMessage.encode())

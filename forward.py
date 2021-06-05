@@ -2,7 +2,6 @@ from __future__ import print_function
 
 from pit import PIT
 from fib import FIB
-from network import NETWORK
 
 class FORWARD():
     def __init__(self):
@@ -29,27 +28,20 @@ class FORWARD():
 
     # Get interest packet forwarding interface
     def Forward_interest(self, fib, network, route_ID, interest):
-        '''
-        interest = {'type': 'interest', 'interest_ID': 0, 'consumer_ID': 0, 'route_ID': 0, 'content_name': 'r0/0',
-                            'interest_hop': 0, 'life_hop': 5, 'start_time': 0.0}
-        # Not optimized
-        fib = network = {'r'+'route_ID':[route_ID, ...], ...}
 
-        # Can be optimized
-        fib = [[content_name,[[cost, outface], ...]], ...]
-        '''
+
         Outfaces = []
         inface = interest['route_ID']
+        '''
+        for Outface in network['r'+str(route_ID)]:
+            if Outface == inface:
+                Outfaces.append(Outface)
+        '''
         # Get the fibs record table of this router
-        # Network = NETWORK()
-        network = network       # Network.Get_network()
-        fib_entry = network['r'+str(route_ID)]
+        ################################################
+        ''''''
+        Fib = FIB()
+        Outfaces = Fib.Search_fib_interest(fib, route_ID, network, interest)
 
         ################################################
-        # Fib = FIB()
-        # fib_entry = Fib.Search_fib_interest(fib, route_ID, interest)
-        ################################################
-        for x in fib_entry:
-            if x != inface or x != route_ID:
-                Outfaces.append(x)
         return Outfaces

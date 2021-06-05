@@ -16,8 +16,8 @@ class PS():
         '''
         ps = [content_name,...]
         '''
-        self.ps = producer_content
-        return self.ps
+        ps = producer_content
+        return ps
 
     def Get_ps(self):
         return self.ps
@@ -27,9 +27,9 @@ class PS():
         '''
         ps = [content_name,...]
         '''
-        self.ps = ps
-        for i in range(len(self.ps)):
-            if content_name == self.ps[i]:
+        #self.ps = ps
+        for i in range(len(ps)):
+            if content_name == ps[i]:
                 return True
         # No data for content name found in ps
         return False

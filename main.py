@@ -2,9 +2,7 @@
 import time
 import json
 
-from server import Server
-from network import NETWORK
-
+from server import Server, result_save
 
 # Read network
 def load_network():
@@ -30,54 +28,52 @@ def input_interests():
         interests = json.load(fp)
     return interests
 
-def main():
+def main(producer_contents,interests, peremiters, network):
     '''
-    peremiters = {"route_num": 12,      # Number of routers
-                  "frequency": 3,       # How many interest packets sent by each router to the network per second
-                  "content_num": 100,   # The amount of content produced by each producer
-                  "run_time": 10,       # Simulator running time
-                  "queue_size": 10,     # The storage space size of the queue
-                  "cache_size": 10,     # CS storage space size
-                  "FIB_size": 10}       # FIB storage space size
+    peremiters = {"route_num": ,      # Number of routers
+                  "frequency": ,       # How many interest packets sent by each router to the network per second
+                  "content_num": ,   # The amount of content produced by each producer
+                  "run_time": ,       # Simulator running time
+                  "queue_size": ,     # The storage space size of the queue
+                  "cache_size": ,     # CS storage space size
+                  "FIB_size": }       # FIB storage space size
     '''
-    producer_contents = input_producer_contents()
-    interests = input_interests()
-    peremiters = load_peremiters()
-    network = load_network()
-
     server_num = peremiters['route_num']
-    frequency = peremiters['frequency']  # 10/s
+    frequency = peremiters['frequency']
     route_num = peremiters['route_num']
     content_num = peremiters['content_num']
     run_time = peremiters['run_time']
     queue_size = peremiters['queue_size']
     cache_size = peremiters['cache_size']
     fib_size = peremiters['fib_size']
-    #
+
     sizes = [queue_size, cache_size, fib_size]
     # Get the start time of the simulator
-    run_start_time = int(time.time())
-    # network = Network(server_num)
-    # networks = network.Network_init()
+    run_start_time = time.process_time()
     server_list = []
     for i in range(server_num):
         server = Server(i, sizes, producer_contents, run_start_time, network)
         server.start()
         server_list.append(server)
-
     while True:
         # The router sends new interest packets to the network
         for i in server_list:
             i.start_network(run_start_time, frequency, content_num, route_num, interests)
         # Is the simulator running time up
-        if int(time.time()) - int(run_start_time) > int(run_time):
+        if time.process_time() - run_start_time > run_time:
             # Output simulator running time
-            print(str(int(time.time()) - int(run_start_time)))
+            print('cache_hit_rate = ' + str(float(result_save["cache_hit_cs"] / ( result_save["cache_hit_cs"] + result_save["cache_miss_cs"]))))
+            print('average_response_time = ' + str(float(result_save["response_time"] / result_save["send_interest"])))
+            print(' ')
             print('end')
             for i in server_list:
                 i.join()
             break
 
-
 if __name__ == '__main__':
-    main()
+    paramiters = load_peremiters()
+    producer_contents = input_producer_contents()
+    interests = input_interests()
+    network = load_network()
+    main(producer_contents,interests, paramiters, network)
+
